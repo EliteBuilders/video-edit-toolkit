@@ -14,6 +14,10 @@ for h in post-merge post-checkout; do
   fi
 done
 
+echo "==> machine setup"
+echo "    Run ./bin/setup.sh once per machine — it installs the Resolve MCP server and"
+echo "    HyperFrames, and checks ffmpeg. Skipped here because it clones and installs."
+
 echo "==> checking prerequisites"
 echo "    ?? DaVinci Resolve Studio 21.1+ must be running and reachable over MCP."
 echo "       In Resolve: File > Setup AI Assistants. Free Resolve will not work —"

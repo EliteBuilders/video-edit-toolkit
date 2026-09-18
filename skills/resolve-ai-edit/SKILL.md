@@ -7,6 +7,30 @@ description: Edit any video in DaVinci Resolve Studio 21.1+ through its native M
 
 Operating procedure for driving DaVinci Resolve Studio as an assistant editor. You are the assistant editor. The operator is the editor. You do procedural work fast and you never make the final creative call.
 
+## The process
+
+**Five phases, in order. Do not start one before the previous is approved.** Everything below
+this map is detail for a phase; this is the shape of a run.
+
+| # | Phase | What happens | Ends when |
+|---|---|---|---|
+| **1** | **Intake** | What type of video, what platforms, whose it is, what it must make happen. Read the brand, the brief, the style record and the references | The four answers are echoed back and the preflight block is clean |
+| **2** | **Cut** | Ingest, transcribe, build a cut list as *text*, then build the timeline | The operator approves the cut list, then the rough cut |
+| **3** | **Polish** | Pacing, B-roll placement, grade, audio, captions | The assembly is approved |
+| **4** | **Graphics** | Reference loop first, then build motion graphics as code, place, screenshot, check | Every graphic has been looked at, not just built |
+| **5** | **Deliver** | QA against the type's checklist, human review, one render per platform, debrief | Files are in `output/` and the debrief is filed |
+
+**The full run, in one command.** Paste this to start:
+
+> Use the resolve-ai-edit skill. Run the full process from intake. Start with preflight and
+> report it before touching anything.
+
+That runs phases 1-5 with a stop at every gate. To resume mid-way, name the phase: *"pick up at
+polish"*. To run one piece only, say so: *"just build the cut list"*.
+
+Phases 2-5 are the six gated stages below; the stage numbers and the phase numbers are not the
+same thing, and the stages are the operative detail.
+
 ## Hard rules
 
 1. **Never render, export, upload, or publish without an explicit yes in that same message.** Queuing a render job is allowed. Starting one is not.
@@ -36,11 +60,34 @@ Establish four things and echo them back before touching media:
 Write the answers at the top of the run report. If the operator cannot answer 4, that is worth
 saying plainly before spending an hour on a cut.
 
+**Then ask for the look, and ask for it in examples rather than adjectives.**
+
+Read `EDIT-STYLE.md` first. If it already has adopted entries, say what they are and ask only
+what has changed — do not re-interview someone who has already told you. If it is empty or
+missing, ask for **two to four references** and be specific about what you need:
+
+- A video or frame whose **cutting pace** is right — how fast, how much air, how hard the cuts
+- One whose **captions** are right — size, placement, how they animate
+- One whose **graphics** are right — lower thirds, list chips, how much of the frame they take
+- Optionally one that is **wrong**, and why. A rejection is often sharper than an approval
+
+"Make it look good" is not an answer and should not be treated as one. Neither is a named
+creator without a reason — *"like MrBeast"* means pace to one person and thumbnails to another.
+
+Every reference that arrives goes through the `edit-style` skill before the cut starts: saved to
+`reference/`, extracted for its *system* rather than its composition, and filed as a dated
+decision. **Never copy a reference's actual design.** Extract the palette logic, the type weights,
+the proportion of frame, the timing — then build this brand's own version. Copying ships under
+the operator's name.
+
+If no references exist and none are coming, say plainly what you will default to — the brand file
+and the craft rules below — so nobody is surprised by the result.
+
 ## Preflight
 
 Run this every session before touching anything. Report results as a short block, then stop and wait if any line fails.
 
-- Resolve is running and reachable over MCP. If not: File > Setup AI Assistants in Resolve, then restart the agent.
+- Resolve is running and reachable over MCP. If not, in order: launch Resolve, then **File > Setup AI Assistants**, then restart the agent. If the MCP server was never installed on this machine, that is `npx davinci-resolve-mcp setup` — or `./bin/setup.sh` in the toolkit, which does it along with everything else.
 - Version is Studio 21.1 or later. Free Resolve has no MCP server and no Python scripting as of 21.1. If it reports free, stop and tell the operator.
 - Ask Resolve's MCP what it can do before assuming. The agent has access to Resolve's API documentation. When a function seems missing, query first, then plan the workaround.
 - Read `BRAND.md` and `BROLL.md` from the project folder. **`BRAND.md` is required for every type** — without it there is no palette, type or safe zone and every graphic is a guess.
@@ -334,7 +381,9 @@ Whichever rung you land on, the clip gets imported to the media pool and placed 
 
 ### The engine
 
-**HyperFrames.** Apache 2.0 renderer from HeyGen. You write the graphic as HTML and CSS with timing attributes, it renders deterministically through headless Chrome and ffmpeg. Fully local, free, no API key.
+**HyperFrames.** Apache 2.0 renderer from HeyGen — `github.com/heygen-com/hyperframes`. You write the graphic as HTML and CSS with timing attributes, it renders deterministically through headless Chrome and ffmpeg. Fully local, free, no API key.
+
+**Where it is:** `./bin/setup.sh` clones it to `~/Tools/hyperframes` (override with `HYPERFRAMES_DIR`) and records the path in `.hyperframes-path` at the toolkit root. Read that file rather than guessing. If it is missing, HyperFrames is not installed: say so and run `./bin/setup.sh`, do not hand-roll a renderer in its place. **A graphics phase with no renderer is a blocked phase, not a reason to improvise** — the cut and the polish can still ship.
 
 - **Always render with `--format mov`.** That gives ProRes 4444 with a real alpha channel, which drops straight onto an upper video track in Resolve. Do not use `webm` for alpha; it silently fails on Windows.
 - Output goes to the project's `graphics/` folder, then imports and places through the Resolve MCP at the marked timecode.
@@ -431,6 +480,25 @@ When you hit one of these, say so out loud rather than silently failing or quiet
 ## Fallback path
 
 If MCP is down or a function does not exist, build the cut as an FCPXML 1.10 and have the operator import it. Author in OpenTimelineIO, emit FCPXML as primary and CMX 3600 EDL as fallback. Match frame rate exactly, 23.976 written as 24 is the most common import failure. Flatten compound clips first, they do not survive the round trip. Media must already be in the media pool before an EDL import.
+
+## Delivery
+
+The run is not finished when the render finishes.
+
+- **One file per platform named in intake**, exported from its own framing pass, named
+  `<project>-<platform>-<aspect>` so nobody opens a file to find out where it goes
+- **Everything lands in `output/`** inside the project folder. Client work stays in the client's
+  own folder — never a scratch directory, never this repo
+- **Captions**: burned where the type requires it, plus an `.srt` beside the file for any platform
+  that accepts one
+- **A cover or thumbnail frame** pulled from the timeline if the platform uses one, saved beside
+  the export
+- **The approved timeline is backed up as `_approved`** before the render pass, so a render cannot
+  destroy it
+- **Hand back a list**, not a folder path: each file, where it runs, its runtime and aspect, and
+  anything still outstanding — an unverified claim, a missing permission, a caption fix
+- **Then the debrief.** Stage 6 is part of delivery, not an optional extra. Skipping it means the
+  same correction gets made on the next video
 
 ## Reporting format
 

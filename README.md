@@ -56,19 +56,45 @@ is three deliverables rather than one file someone crops later.
 - **DaVinci Resolve Studio 21.1+**, running, reachable over its native MCP server. Studio
   specifically — 21.1 removed Python scripting from the free edition, so free Resolve cannot
   drive this at all.
-- **HyperFrames** for motion graphics. Apache 2.0, fully local, no API key: HTML and CSS with
-  timing attributes, rendered through headless Chrome and ffmpeg. Ignore the hosted MCP.
+- **HyperFrames** for motion graphics — `github.com/heygen-com/hyperframes`. Apache 2.0, fully
+  local, no API key: HTML and CSS with timing attributes, rendered through headless Chrome and
+  ffmpeg. Installed by `./bin/setup.sh`. Ignore the hosted MCP — it needs a HeyGen account and
+  renders on their infrastructure for the same result.
 - Animated captions need nothing extra — Resolve Studio ships Word Highlight, Slide In, Rotate,
   Lollipop and Statement on the subtitle track. **Do not rebuild in HyperFrames what Resolve
   already does.**
 - Optional, and the only thing that costs money: AI B-roll generation, gated behind a cost
   estimate and an explicit yes.
 
+## The process
+
+Five phases, gated. Nothing starts before the previous one is approved.
+
+| # | Phase | What happens |
+|---|---|---|
+| 1 | **Intake** | Type, platforms, whose it is, what it must achieve — then the look, asked for in *examples* rather than adjectives |
+| 2 | **Cut** | Transcribe, cut list as text, then the timeline |
+| 3 | **Polish** | Pacing, B-roll, grade, audio, captions |
+| 4 | **Graphics** | Reference loop, then motion graphics as code, placed and checked |
+| 5 | **Deliver** | QA, human review, one render per platform, debrief |
+
+**To run the whole thing:**
+
+> Use the resolve-ai-edit skill. Run the full process from intake. Start with preflight and
+> report it before touching anything.
+
+To resume: *"pick up at polish"*. To run one piece: *"just build the cut list"*.
+
 ## Installation
 
 ```
-./install.sh
+./install.sh        # symlink the skills
+./bin/setup.sh      # once per machine: Resolve MCP + HyperFrames + ffmpeg check
 ```
+
+`setup.sh` clones HyperFrames from `github.com/heygen-com/hyperframes` to `~/Tools/hyperframes`,
+installs its dependencies, records the path, and runs `npx davinci-resolve-mcp setup`. Idempotent;
+it never touches an existing clone.
 
 Symlinks the skills into `~/.claude/skills`, so editing a skill here is live in the next session
 with no re-install. Installs post-merge and post-checkout hooks so a pull that adds a skill makes
