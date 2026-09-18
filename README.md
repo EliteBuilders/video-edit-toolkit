@@ -1,0 +1,102 @@
+# video-edit-toolkit
+
+Three Claude skills for editing video in DaVinci Resolve Studio, building motion graphics as
+code, and getting closer to what a client actually wants with every pass.
+
+**This is the edit layer and nothing else.** No research, no packaging, no titles, no thumbnails,
+no scripting. It cuts what is in front of it, whatever that is and wherever it runs.
+
+| Skill | What it does | When |
+|---|---|---|
+| `video-creative-brief` | Ten-question interview producing `BRAND.md` and `CREATIVE-BRIEF.md` | Once per brand, before any footage |
+| `edit-style` | Turns a dropped screenshot or reference into a dated, extracted decision in `EDIT-STYLE.md` | Every time an example is handed over |
+| `resolve-ai-edit` | Six gated stages: ingest, rough cut, polish, QA, review-then-render, debrief | Every video |
+
+## It carries no client
+
+Everything about a specific brand lives in that brand's **project folder**, never in a skill. The
+same three skills cut a client testimonial, a paid ad and an in-house YouTube video, each in its
+own brand, because each reads its own folder.
+
+```
+<client>/video/<project>/
+  BRAND.md            colours, type, layout zones, loudness       (mechanical spec)
+  CREATIVE-BRIEF.md   viewer, promise, feel, pacing, prohibitions (stable intent)
+  EDIT-STYLE.md       every reference shown, extracted and dated  (visual evidence, grows)
+  SPOT-BRIEF.md       ads and testimonials: offer, claim, CTA, sign-offs
+  BROLL.md            which B-roll sources are enabled
+  reference/          the actual screenshots and frames behind EDIT-STYLE.md
+  raw/ output/ assets/ graphics/kit/ broll/candidates/
+```
+
+**A client's work belongs in that client's own folder.** If they do not have one, create it.
+Never in this repo.
+
+## The three files, and why they are separate
+
+Keeping them apart is what stops the brief becoming an unreadable log:
+
+- **`BRAND.md`** answers *what are the values* — a hex code, a typeface, a safe zone. Mechanical,
+  rarely changes, no judgment required to apply.
+- **`CREATIVE-BRIEF.md`** answers *what is this supposed to feel like* — the viewer, the promise,
+  the pacing, the prohibitions. Stable intent. Changes when the brand moves.
+- **`EDIT-STYLE.md`** answers *what have they actually shown us they like* — append-only, dated,
+  each entry naming the reference file it came from and what it supersedes. This is the one that
+  grows, and it is why the fifth edit for a client is closer than the first.
+
+## What it asks before touching media
+
+Type and platform, every time, never inferred from a folder name: is this a YouTube long-form, a
+Short or Reel, a paid ad, a testimonial, a case study, a screen recording — and where does it
+run? The type sets the structure, the platform sets the format, and one video for three platforms
+is three deliverables rather than one file someone crops later.
+
+## Requirements
+
+- **DaVinci Resolve Studio 21.1+**, running, reachable over its native MCP server. Studio
+  specifically — 21.1 removed Python scripting from the free edition, so free Resolve cannot
+  drive this at all.
+- **HyperFrames** for motion graphics. Apache 2.0, fully local, no API key: HTML and CSS with
+  timing attributes, rendered through headless Chrome and ffmpeg. Ignore the hosted MCP.
+- Animated captions need nothing extra — Resolve Studio ships Word Highlight, Slide In, Rotate,
+  Lollipop and Statement on the subtitle track. **Do not rebuild in HyperFrames what Resolve
+  already does.**
+- Optional, and the only thing that costs money: AI B-roll generation, gated behind a cost
+  estimate and an explicit yes.
+
+## Installation
+
+```
+./install.sh
+```
+
+Symlinks the skills into `~/.claude/skills`, so editing a skill here is live in the next session
+with no re-install. Installs post-merge and post-checkout hooks so a pull that adds a skill makes
+it invocable.
+
+### Starting a project
+
+```
+./bin/new-project.sh <path-inside-the-client-folder>
+```
+
+Scaffolds the folder layout and copies in the templates. Idempotent, and it never overwrites a
+`BRAND.md`, `BROLL.md` or `EDIT-STYLE.md` that has already been edited.
+
+## Portability
+
+The skills are plain Markdown with no Claude-specific syntax beyond the frontmatter, so another
+assistant can read them as a procedure. Two things do not travel: `~/.claude/skills` is a Claude
+Code convention, and driving Resolve needs that MCP server connected in whatever tool is running.
+A tool without it can follow the method but cannot touch the timeline.
+
+## Relationship to youtube-toolkit
+
+`youtube-toolkit` runs a YouTube channel — research, architecture, planning, greenlighting,
+packaging. Its workflow hands off to this repo after recording and picks the video back up for
+packaging afterwards. **They install independently and neither needs the other**; a client with
+ads and testimonials and no channel at all only needs this one.
+
+Read `MAINTENANCE.md` before editing any skill. `DECISIONS.md` records why the edit layer is
+shaped the way it is — read it before changing a rule, because several exist due to a specific
+approach that was tried and failed.

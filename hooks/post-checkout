@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Re-link skills after a pull, so a newly added skill is never invisible.
+exec "$(git rev-parse --show-toplevel)/bin/link-skills.sh" --quiet
