@@ -10,7 +10,7 @@
 # BROLL.md are kept as-is if present, because they hold real brand decisions.
 #
 # Templates are read from skills/resolve-ai-edit/templates/, which is the versioned
-# source. Ported from the josh-video-skills drop, which shipped its own stale copies.
+# source. Ported from the original tool drop, which shipped its own stale copies.
 set -euo pipefail
 
 TOOLKIT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
