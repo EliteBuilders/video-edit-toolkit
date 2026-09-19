@@ -55,7 +55,11 @@ is three deliverables rather than one file someone crops later.
 
 - **DaVinci Resolve Studio 21.1+**, running, reachable over its native MCP server. Studio
   specifically — 21.1 removed Python scripting from the free edition, so free Resolve cannot
-  drive this at all.
+  drive this at all. Two settings inside Resolve are not optional and `setup.sh` cannot set them:
+  **Preferences > General > "External scripting using" = Local**, and **File > Setup AI
+  Assistants**. Without the first, the MCP connects and nothing can touch the timeline.
+- **bun.** HyperFrames is a bun workspace whose packages depend on each other through
+  `workspace:^`, which npm cannot resolve at all. `brew install oven-sh/bun/bun`.
 - **HyperFrames** for motion graphics — `github.com/heygen-com/hyperframes`. Apache 2.0, fully
   local, no API key: HTML and CSS with timing attributes, rendered through headless Chrome and
   ffmpeg. Installed by `./bin/setup.sh`. Ignore the hosted MCP — it needs a HeyGen account and

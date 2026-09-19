@@ -87,7 +87,8 @@ and the craft rules below — so nobody is surprised by the result.
 
 Run this every session before touching anything. Report results as a short block, then stop and wait if any line fails.
 
-- Resolve is running and reachable over MCP. If not, in order: launch Resolve, then **File > Setup AI Assistants**, then restart the agent. If the MCP server was never installed on this machine, that is `npx davinci-resolve-mcp setup` — or `./bin/setup.sh` in the toolkit, which does it along with everything else.
+- Resolve is running and reachable over MCP, **and external scripting is actually enabled**. Check both — they fail differently. The MCP can report Resolve as running while every timeline call returns no connection, and the cause is almost always one setting: **Preferences > General > "External scripting using" = Local**. Verify by making one read call against the project, not by trusting the connection banner.
+- If the MCP server was never installed on this machine: `npx davinci-resolve-mcp setup` (interactive), or `./bin/setup.sh` in the toolkit. Then **File > Setup AI Assistants** in Resolve, then restart the agent.
 - Version is Studio 21.1 or later. Free Resolve has no MCP server and no Python scripting as of 21.1. If it reports free, stop and tell the operator.
 - Ask Resolve's MCP what it can do before assuming. The agent has access to Resolve's API documentation. When a function seems missing, query first, then plan the workaround.
 - Read `BRAND.md` and `BROLL.md` from the project folder. **`BRAND.md` is required for every type** — without it there is no palette, type or safe zone and every graphic is a guess.
