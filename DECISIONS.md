@@ -180,10 +180,17 @@ Not everything is in this repo. These are the other homes:
 
 ## Status
 
-`resolve-ai-edit` has **never been run against real footage.** It is written from research,
-five reference videos, and Blackmagic's release notes. The first run is deliberately
-constrained to a text-only cut list on a throwaway project. See
-`skills/resolve-ai-edit/templates/FIRST-RUN.md`.
+**Run end to end on real client footage, 2026-09-19.** Two projects on one client: a paid social
+ad set and a testimonial set, both scaffolded by `new-project.sh`, both carrying their own
+`EDIT-STYLE.md`. The workspace convention held without being forced — nothing about the client
+ended up in this repo.
 
-Until that run happens and six real numbers exist, treat every timing claim here as inherited
-from someone else's test, not measured on this machine.
+What that run produced is the evidence this file was waiting for:
+`skills/resolve-ai-edit/RESOLVE-API-TRAPS.md`, twelve verified 21.1 behaviours that contradict
+the documented stubs, each one paid for with a debugging cycle. Five global corrections went into
+`LEARNINGS.md`. The debrief loop works.
+
+**Still not measured: the six benchmark numbers.** No `BENCHMARK.md` was written on either
+project, so the 6-to-8-hour manual baseline remains a claim rather than a comparison, and every
+timing statement in this file is still inherited rather than measured on this machine. That is
+the one thing the next run should capture, and it costs nothing but writing six numbers down.
