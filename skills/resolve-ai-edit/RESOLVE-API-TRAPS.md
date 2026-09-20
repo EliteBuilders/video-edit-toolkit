@@ -46,9 +46,20 @@ Timecode counts **24 frames per second label** on 23.976 footage. Convert with 2
 
 - **`Tilt` is unusable at `Scaling = SCALE_FILL`.** The image fills the height exactly, so any
   tilt pulls black bars into frame. Vertical repositioning requires zoom > 1 first.
-- **`Pan` sign:** positive moves the window LEFT, negative moves it RIGHT.
-- **`Pan` units are not source pixels** and not a clean output-pixel mapping either. Do not
-  derive the value — render two or three candidates and look at them.
+- **`Pan` sign:** positive moves the window LEFT — i.e. the IMAGE moves right.
+- **`Pan` units, measured 2026-09-20** on a 3840x2160 source in a 1080x1350 timeline:
+  **1 unit = 2.2222 output px**, which is exactly `3840/1728`. It does **not** scale with
+  `ZoomX` — +200 moved the image 444 px at zoom 1.00 and 444 px at zoom 1.26. So to move the
+  visible window by a known number of SOURCE pixels:
+
+  ```python
+  pan = -shift_src_px * 0.28125 * zoom     # 0.28125 = 0.625 / 2.2222
+  ```
+
+  Calibrate once per project rather than trusting this: render the same frame at `Pan 0` and
+  `Pan 200` and cross-correlate one horizontal band. It takes two 3-frame renders.
+- **`GetProperty("Pan")` returns `None`** even straight after a `SetProperty("Pan", ...)` that
+  demonstrably changed the render. Do not use the read-back to confirm a write; render a frame.
 
 ## Keyframes: there is no transform keyframe API
 
@@ -78,16 +89,81 @@ leaves the old comp in place — every clip ended up with `Composition 1` *and* 
 Called on its own afterwards the identical delete returned `true` and worked. **Delete in a
 separate pass, then add, then assert `GetFusionCompCount() == 1`** on every clip.
 
-**`Transform.Center` is the reliable way to reframe**, not the Edit page `Pan`. It is normalised
-to the comp (= source) resolution, so a shift is exact and needs no calibration:
+**`Transform.Center` reframes exactly when the comp is live.** It is normalised to the comp
+(= source) resolution, so a shift needs no calibration:
 
 ```python
 xf.Center = {1: 0.5 - shift_px/3840.0, 2: 0.5}   # +shift_px moves the WINDOW right
 ```
 
-It composes with the keyframed `Size` — the drift then pivots on the offset centre, which is
-what you want. Use this instead of `Pan` whenever the shift has to be a known number of source
-pixels.
+It composes with the keyframed `Size`, so the drift pivots on the offset centre.
+
+**But do not assume the comp is live — prove it.** See the next entry.
+
+## A clip Fusion comp can be silently inert, and nothing reports it
+
+On one timeline (2026-09-20) every clip carried exactly one well-formed comp —
+`MediaIn1 -> Transform1 -> MediaOut1`, no pass-through, correct frame format — and it had
+**zero effect on the render**. `Center = 0.95` with `Size = 0.5` rendered **byte-identical** to
+`Center = 0.5`. Deleting the comp and building a fresh one changed nothing. On another timeline
+in the *same project*, built the same way, the identical code reframed correctly.
+
+The one difference found: the inert timeline was created by `CreateEmptyTimeline` at the
+**project's** 3840x2160 and switched to 1080x1350 afterwards, so its comps were built against
+the 4K timeline. That is a hypothesis, not a proven cause.
+
+**The 20-second test, worth running before building twelve comps:**
+
+```python
+xf.Center = {1: 0.95, 2: 0.5}          # deliberately absurd
+# render 3 frames, then render 3 more at 0.5 and compare the files
+```
+
+If the two frames are identical, Fusion is not in the render path on that timeline. Fall back
+to the Edit page `Pan`, which is calibratable and always applies.
+
+**Losing Fusion costs the intra-clip zoom drift**, because `SetProperty` cannot keyframe. There
+is no Edit-page substitute; a static zoom per beat is the fallback.
+
+## `CreateEmptyTimeline` inherits the PROJECT resolution, not the last timeline's
+
+A new timeline in a 3840x2160 project comes out 3840x2160 even when every other timeline in it
+is 1080x1350. The render still honours `FormatWidth/Height`, so it completes cleanly and
+**letterboxes the whole ad** — the 4K timeline is fitted into the 4:5 output. `Scaling` reads
+back as `SCALE_FILL` on every clip the whole time, so the usual letterbox check passes.
+
+Fixing it needs the undocumented spelling. `timelineUseCustomSettings` is **not** the key and
+returns `false`; the key is **`useCustomSettings`**:
+
+```python
+tl.SetSetting("useCustomSettings", "1")             # this one, not timelineUseCustomSettings
+for k, v in [("timelineResolutionWidth", "1080"), ("timelineResolutionHeight", "1350"),
+             ("timelineOutputResolutionWidth", "1080"), ("timelineOutputResolutionHeight", "1350")]:
+    assert tl.SetSetting(k, v)
+```
+
+Every `SetSetting` before `useCustomSettings` is set returns `false` and does nothing. Check the
+return of each one, and read `timelineResolutionWidth` back.
+
+## `AppendToTimeline` — `endFrame` is EXCLUSIVE
+
+The docs read like an in/out pair, so `endFrame = src_out - 1` is the natural guess. It is
+wrong: it produces a clip **one frame short**. With an explicit `recordFrame` per item that does
+not shorten the timeline, it leaves a **one-frame gap before every beat** — a black flash at
+each cut that survives to delivery. Pass `endFrame = src_out` and assert that consecutive items
+touch:
+
+```python
+assert all(b.GetStart() == a.GetEnd() for a, b in zip(items, items[1:]))
+```
+
+## `DeleteClips` can leave a track that refuses new appends
+
+After `tl.DeleteClips(items)`, `AppendToTimeline` returned a 12-item list — and the track stayed
+empty. Re-fetching the timeline by index, re-selecting it, and switching pages all failed to
+revive it. Appending to a **freshly created** timeline worked first time with identical code.
+Treat a track that has been emptied with `DeleteClips` as unusable: build a new timeline
+instead of trying to refill it.
 
 ## Subtitles
 
@@ -169,6 +245,12 @@ frame from every clip at once.
 
 Two things that will waste a cycle:
 
+- **The playhead can silently refuse to move.** On a just-created timeline, `SetCurrentTimecode`
+  returned `true` while `GetCurrentTimecode` read back the *previous* position, and the export
+  wrote the wrong frame — at 3840x2160 rather than the timeline resolution, which is the tell.
+  **Always read the timecode back and compare** before trusting the still; if it disagrees,
+  render three frames and pull them with ffmpeg instead. A still that comes out at the source
+  resolution is never the timeline frame.
 - **The output directory must already exist.** It returns `false` and writes nothing if the
   folder is missing, with no error. `mkdir -p` first, and check the return value.
 - A **retracted claim, 2026-09-19:** an earlier version of this file said the still export
