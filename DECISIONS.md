@@ -190,6 +190,19 @@ What that run produced is the evidence this file was waiting for:
 the documented stubs, each one paid for with a debugging cycle. Five global corrections went into
 `LEARNINGS.md`. The debrief loop works.
 
+**Watch on the first long-form run.** Everything proven so far is short-form. Three thresholds
+were set when "a video" meant a 90-second ad and have never been tested at length:
+
+- **The take-group cap of eight** (`SKILL.md`, Stage 2). Past eight groups it auto-picks the last
+  complete take. Right on an ad, likely wrong on a keynote with thirty groups where the third
+  take is often the best. Deliberately left alone until a real long-form run says what the number
+  should be — do not guess a new one.
+- **Transcript hallucination across silence** matters more here. The transcript drives the cut
+  list, caption cues, take comparison and chapter structure, so one invented phrase reaches four
+  outputs. Spot-check across pauses specifically.
+- **The Resolve lock** lasts the whole run. At an hour of footage the batching section stops being
+  optional.
+
 **Still not measured: the six benchmark numbers.** No `BENCHMARK.md` was written on either
 project, so the 6-to-8-hour manual baseline remains a claim rather than a comparison, and every
 timing statement in this file is still inherited rather than measured on this machine. That is
