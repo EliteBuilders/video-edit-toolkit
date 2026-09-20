@@ -44,8 +44,13 @@ Timecode counts **24 frames per second label** on 23.976 footage. Convert with 2
 
 ## Transform
 
-- **`Tilt` is unusable at `Scaling = SCALE_FILL`.** The image fills the height exactly, so any
-  tilt pulls black bars into frame. Vertical repositioning requires zoom > 1 first.
+- **`Tilt` at `Scaling = SCALE_FILL` — check for slack, do not assume there is none.** An
+  earlier version of this file said tilt always pulls black bars in because the image fills the
+  height exactly. **That is not reliably true.** On a 3840x2160 source in a 1080x1350 timeline
+  there was ample vertical slack at zoom 1.00 and no bar appeared at `Tilt -60`. Render one
+  frame at a deliberately large tilt and look before concluding either way.
+- **A tighter zoom needs a proportionally larger tilt for the same framing.** Correcting a
+  clipped head took `Tilt -60` at zoom 1.00 and `-200` at zoom 1.26 on the same shot.
 - **`Pan` sign:** positive moves the window LEFT — i.e. the IMAGE moves right.
 - **`Pan` units, measured 2026-09-20** on a 3840x2160 source in a 1080x1350 timeline:
   **1 unit = 2.2222 output px**, which is exactly `3840/1728`. It does **not** scale with
@@ -108,9 +113,15 @@ On one timeline (2026-09-20) every clip carried exactly one well-formed comp —
 `Center = 0.5`. Deleting the comp and building a fresh one changed nothing. On another timeline
 in the *same project*, built the same way, the identical code reframed correctly.
 
-The one difference found: the inert timeline was created by `CreateEmptyTimeline` at the
-**project's** 3840x2160 and switched to 1080x1350 afterwards, so its comps were built against
-the 4K timeline. That is a hypothesis, not a proven cause.
+**Cause unknown, and one plausible theory is already disproven.** The first inert timeline had
+been created at the project's 3840x2160 and switched to 1080x1350 afterwards, so "the comps
+were built against a 4K timeline" looked like the answer. It is not: the next timeline was
+created at 1080x1350 *before any comp existed* and its comps were inert too.
+
+What is actually observable: **every timeline created by scripting in one session was inert,
+while timelines built in an earlier session, in the same project, were live.** So it tracks
+something about the application's state, not about how the timeline is constructed. Do not
+spend a cycle theorising — run the test below and route around it.
 
 **The 20-second test, worth running before building twelve comps:**
 
@@ -210,12 +221,43 @@ reliable enough to gate on.
 
 ## Transcription
 
+**`TranscribeAudio()` returns `false` unless Resolve is on the Media page.** It fails silently
+and `GetTranscription()` then returns `None`, which looks like "this clip cannot be
+transcribed". `resolve.OpenPage("media")` first and it returns `true` immediately. Four clips
+that all "failed" transcribed on the retry without changing anything else.
+
 `MediaPoolItem.TranscribeAudio()` runs about 10x realtime. `GetTranscription()` returns
 word-level timecodes — the basis for both cut lists and caption cues.
 
 **It hallucinates across silence.** On a clip where the speaker wrote on a whiteboard mid
 sentence, "decisions at the whiteboard level" came back as "decisions at the end of the day".
 Read transcripts before trusting them, especially across pauses.
+
+## `AddTransition` does NOT shift the timeline when handles exist
+
+A centred cross dissolve normally shortens a timeline by its own duration, which would move
+every downstream caption and graphic. **It does not, if both clips have handles** — media
+beyond the cut, which they do whenever the cut exists to remove a pause. Resolve overlaps into
+the handles instead.
+
+Measured on a 13-segment timeline with 12 six-frame dissolves: `GetEndFrame()` stayed at 13237,
+and every item kept its `GetStart()`, `GetEnd()` and `GetLeftOffset()`. So
+`tl = src - src_in + tl_in` still held and the SRT generated straight off it.
+
+**Read the positions back rather than trusting either outcome.** `GetItemListInTrack` returns
+the transitions too, as items with `GetType() == "transition"` and a `None` left offset —
+filter them out before zipping the list against a beat table.
+
+```python
+vids = [it for it in tl.GetItemListInTrack("video", 1) if it.GetType() == "video"]
+```
+
+## Frame rate is per PROJECT, not per timeline
+
+`timelineFrameRate` is a project setting and Resolve locks it once the media pool has clips.
+A 30fps deliverable inside a 23.976 project needs **a new project**, not a custom timeline —
+`ProjectManager.CreateProject`, set the frame rate, then import. Resolution *is* per timeline
+(`useCustomSettings`), frame rate is not.
 
 ## Grading is fully scriptable — and savable
 
@@ -231,6 +273,25 @@ Do not treat grade as a GUI-only step. The whole chain has an API:
 - **`ti.SetCDL({"NodeIndex", "Slope", "Offset", "Power", "Saturation"})`** — primitive grading
   as numbers, so a base balance can live in code and diff like code.
 - **`graph.ResetAllGrades()`**, `GetNumNodes()`, `SetNodeEnabled()` for node-level control.
+
+### `SetLUT` returns `False` for a LUT Resolve has not indexed yet
+
+A `.cube` copied into the LUT folder **after Resolve launched** does not exist as far as
+`graph.SetLUT()` is concerned. It returns `False` for every clip and changes nothing. There is
+no error, no warning, and the identical call against a LUT that *was* present at launch returns
+`True` in the same loop — which is exactly what makes it look like a problem with the clips
+rather than with the file.
+
+```python
+project.RefreshLUTList()          # then SetLUT starts returning True
+```
+
+Call it once after writing any new `.cube`, before applying it. Cost: one cycle on the WISE VSL,
+2026-09-20, where six testimonial clips silently kept their ungraded look while the nine clips
+around them graded correctly.
+
+**And always read the LUT back** — `graph.GetLUT(1)` — rather than trusting the return value
+alone. `SetLUT` returning `True` is the weaker of the two signals.
 
 ## `ExportCurrentFrameAsStill` is the fast verification loop
 
@@ -280,3 +341,17 @@ per-clip value explicitly and verify with a still.
 Resolve has no locking here. If a second agent or a human is working the same project,
 timeline edits and grades will clobber each other silently. Confirm who owns the project before
 writing to it.
+
+## HyperFrames: `data-width` / `data-height` decide the render size, not the CSS
+
+A composition root without them **silently renders 1080x1920 portrait**, whatever the CSS says.
+A 1920x1080 overlay came back portrait, Resolve then scaled it to fill, and every graphic was
+about twice the intended size and cropped — after a nine-minute render.
+
+```html
+<div id="overlay" data-composition-id="overlay"
+     data-width="1920" data-height="1080" data-fps="30" data-duration="447.2333">
+```
+
+**Probe the output before placing it:** `ffprobe -show_entries stream=width,height`. One second
+there saves a full re-render.

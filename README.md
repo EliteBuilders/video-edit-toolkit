@@ -12,6 +12,22 @@ no scripting. It cuts what is in front of it, whatever that is and wherever it r
 | `edit-style` | Turns a dropped screenshot or reference into a dated, extracted decision in `EDIT-STYLE.md` | Every time an example is handed over |
 | `resolve-ai-edit` | Six gated stages: ingest, rough cut, polish, QA, review-then-render, debrief | Every video |
 
+## Start here
+
+New to this repo? Read in this order:
+
+1. **`skills/resolve-ai-edit/PIPELINE.md`** — how the machine is wired. Three programs, not one:
+   HyperFrames renders the graphics, Resolve renders an *intermediate*, ffmpeg makes the file a
+   human watches. **Resolve's render queue never shows you a finished video** — that one fact
+   confuses everybody once.
+2. **`skills/resolve-ai-edit/SKILL.md`** — the six gated stages and the QA checklist per video type.
+3. **`skills/resolve-ai-edit/LEARNINGS.md`** — craft rules earned from real corrections, grouped
+   by theme. Binding.
+4. **`skills/resolve-ai-edit/RESOLVE-API-TRAPS.md`** — verified Resolve 21.1 behaviour that
+   contradicts the documented stubs. Silent write failures, mostly.
+5. **`skills/resolve-ai-edit/templates/tools/`** — a caption generator and a delivery script with
+   the traps already fixed. Copy them into a project rather than writing your own.
+
 ## It carries no client
 
 Everything about a specific brand lives in that brand's **project folder**, never in a skill. The

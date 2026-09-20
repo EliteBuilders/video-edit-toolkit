@@ -102,6 +102,8 @@ Run this every session before touching anything. Report results as a short block
   | Client work of any type | The **client's** `BRAND.md`, and their `compliance.md` if one exists | **Stop.** Never dress a client's video in the operator's brand or another client's |
 
 - Read `LEARNINGS.md` from the skill folder (`~/.claude/skills/resolve-ai-edit/LEARNINGS.md`). It holds every correction the operator has given on past videos. Treat its contents as binding instructions, ranking below this file but above your own defaults.
+- Read `templates/tools/README.md` and copy `templates/tools/build_srt.py` into the project's `tools/` on any job with burned-in captions. **Resolve's subtitle track exposes no styling to the API**, so captions are generated from a cue table and burned in from a composition; the template carries the guards that stop bad captions shipping.
+- **Read `PIPELINE.md` from the skill folder before your first render.** It is the wiring diagram: three programs, not one; what each stage outputs and where; why a "Complete" job in Resolve is not a finished video; the per-project `tools/` module layout; how variants are built as an ORDER over one beat table; and the cheap verification loops. Everything in it cost a cycle to learn.
 - Read `RESOLVE-API-TRAPS.md` from the skill folder. It holds verified Resolve 21.1 API behaviour that contradicts the documented stubs — silent write failures, `ImportMedia` signatures, keyframing via Fusion, subtitle handling, render settings. Every entry there cost a debugging cycle on a real job; do not rediscover them.
 - Confirm the project name, the target bin, and the raw media location. Never guess a path from a partial folder name without echoing back what you found and what you are about to touch.
 - Warn the operator once per session: **Resolve is locked while you are processing.** They cannot edit alongside you. Long jobs should be batched and run while they are away.
@@ -173,7 +175,12 @@ You run this. Then the operator runs it. Both.
 | Type | Also verify |
 |---|---|
 | Any vertical | Nothing important inside the top ~250px or bottom ~420px. Open a frame and look — do not assume the title-safe guide matches the platform's UI |
-| Any burned-caption type | Captions present on **every** spoken line, readable at phone size, and never overlapping a lower third or a CTA |
+| Any burned-caption type | Captions present on **every** spoken line, readable at phone size, and never overlapping a lower third or a CTA. **No caption block ends with a comma or a period.** |
+| Any burned-caption type | **No cue spans a cut**, no cue is under 3 words, no cue ends on a dangling function word, and no cue opens with the last word of the previous sentence. Assert all four in the generator — a reviewer spots one speaker's words on the next speaker's face immediately |
+| Any burned-caption type | **No frame between two cues is bare.** Butt adjacent cues and hand over in ~2 frames; a gap mid-sentence reads as a dropped frame, not as timing |
+| Any type with motion graphics | **Every graphic exits at the next sentence boundary** after its last element lands, derived from the word timings — not from a hand-picked frame |
+| Any talking head | The speaker's whole head is in frame at **every** zoom level — check a frame from each beat, not just the widest |
+| Any type | The last beat ends where the mouth closes, not where the transcript's last word is timed |
 | Paid ad | The hook lands inside 3 seconds with no ramp-up. Brand appears inside 5. The CTA is on screen long enough to read aloud twice. Every claim has a cleared marker |
 | Testimonial | No sentence assembled from two takes. Every stated figure is marked. Written permission is confirmed, or flagged as outstanding |
 | Screen recording | No credential, token, email address, client name or private data visible in any frame of the capture |
