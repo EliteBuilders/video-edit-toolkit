@@ -102,6 +102,7 @@ Run this every session before touching anything. Report results as a short block
   | Client work of any type | The **client's** `BRAND.md`, and their `compliance.md` if one exists | **Stop.** Never dress a client's video in the operator's brand or another client's |
 
 - Read `LEARNINGS.md` from the skill folder (`~/.claude/skills/resolve-ai-edit/LEARNINGS.md`). It holds every correction the operator has given on past videos. Treat its contents as binding instructions, ranking below this file but above your own defaults.
+- Read `RESOLVE-API-TRAPS.md` from the skill folder. It holds verified Resolve 21.1 API behaviour that contradicts the documented stubs — silent write failures, `ImportMedia` signatures, keyframing via Fusion, subtitle handling, render settings. Every entry there cost a debugging cycle on a real job; do not rediscover them.
 - Confirm the project name, the target bin, and the raw media location. Never guess a path from a partial folder name without echoing back what you found and what you are about to touch.
 - Warn the operator once per session: **Resolve is locked while you are processing.** They cannot edit alongside you. Long jobs should be batched and run while they are away.
 
