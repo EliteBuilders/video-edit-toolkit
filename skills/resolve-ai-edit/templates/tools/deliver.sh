@@ -15,7 +15,11 @@
 #     hold true peak afterwards; limit 0.80 still came back -0.2 dBTP
 #   * the limiter runs at 0.72 for the same reason
 #   * chasing I upward was NON-MONOTONIC - I=-13.0 came back quieter AND hotter
-#     on peak than I=-13.8, so -13.8 it is
+#     on peak than I=-13.8. CAUSE, found later: when the gain needed
+#     (target_I - measured_I) exceeds the TP headroom (target_TP - measured_TP),
+#     loudnorm silently drops out of linear mode into DYNAMIC mode, which is
+#     content-dependent and not reproducible. Check that inequality before
+#     trusting the output, and loudness-match A/B variants to each other after
 #   * EVERY variable in a filter string is braced. zsh eats `:l` in
 #     `limit=$3:level=false` as a lowercase modifier, AND reads `$SPEED[v]` in
 #     `setpts=PTS/$SPEED[v]` as an ARRAY SUBSCRIPT, which silently expands to

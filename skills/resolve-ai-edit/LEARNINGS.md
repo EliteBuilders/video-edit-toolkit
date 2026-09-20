@@ -54,6 +54,8 @@ Corrections the operator has given that apply to **every** video, every brand, f
 
 - 2026-09-20 - Level-match inserted footage to the host footage BEFORE mixing, measuring each with ebur128. Testimonial bites arrived 12-18 dB hotter than the narration; a master limiter cannot fix that, it just crushes the loud part and the programme LRA gives it away (15.3 vs 4.6 once matched).
 - 2026-09-20 - `ReplaceClip` refreshes a clip's VIDEO but not its cached AUDIO. Prove a re-levelled insert actually landed by measuring that region of the render, not by trusting the call's return value.
+- 2026-09-20 - **`loudnorm` silently abandons linear mode when the gain it needs would breach the TP ceiling**, and dynamic mode is CONTENT-dependent - two cuts of identical material landed 2.8 LU apart (-15.1 vs -17.9) off near-identical measurements. Check it: if `target_I - measured_I` exceeds `target_TP - measured_TP`, you are in dynamic mode and the result is not reproducible. This is the real cause of "chasing loudness is non-monotonic".
+- 2026-09-20 - **A/B variants of one video must be loudness-matched to each other**, or the louder cut wins for a reason that has nothing to do with the edit. Measure both and trim one with a static gain plus a limiter; never ship a test where the only controlled variable is not the only variable.
 - 2026-09-20 - `loudnorm`'s JSON summary prints at INFO level. Running the measurement pass with `-v error` swallows it and the parse dies with "substring not found". Use `-hide_banner -nostats`, and assert the JSON parsed before using it.
 
 ## Captions
