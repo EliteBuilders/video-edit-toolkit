@@ -31,6 +31,9 @@ Corrections the operator has given that apply to **every** video, every brand, f
 - 2026-09-20 - Hide a silence trim with a short cross dissolve, not a scale change, whenever the source has no resolution to spare. A 20-30% zoom on footage already being upscaled makes the softness pulse from cut to cut; on a locked-off shot a 6-frame dissolve is invisible and costs nothing.
 - 2026-09-20 - Never let Resolve conform a cross-frame-rate clip. `startFrame` is read in TIMELINE frames for one and the conversion is not a clean ratio - in-points drifted up to 42 frames. Pre-conform the clip to the timeline's exact format with ffmpeg first.
 - 2026-09-20 - Declare a re-cut as a list of (frame, delta) and apply it programmatically to hand-measured graphic timings. Re-typing 40 measured frames after lengthening one segment is how one of them gets mistyped.
+- 2026-09-20 - **The transcript's first word is anchored to the SEGMENT start, not to the word.** Cutting an in-point to it ships whatever is in front of the voice - on one ad, the slate call "action" plus two full seconds of room tone, on the hook. The word after it gives the game away: "If" at frame 0 and "you're" at frame 51 is not speech. Take every clip's first in-point from `silencedetect` on the audio, never from the transcript.
+- 2026-09-20 - **An aligner collapses a retake into a single "(...)"** when its words duplicate a take it has already transcribed, so the retake exists in the audio, is invisible in the transcript, and gets NO captions. A "(...)" spanning several seconds between two halves of one sentence is the signature. Re-transcribe that window in isolation to recover it - and expect different words: take 1 was "Are you working with a business owner", take 2 was "Are you an advisor working with business owners".
+- 2026-09-20 - Measure a suspect fragment with `volumedetect`, not `ebur128`. EBU integrated needs 400ms blocks and returns -70 LUFS on anything shorter, which reads as silence; a 0.37s "word" that measured -70 was really a -46 dB bump the aligner had hallucinated a word onto.
 
 ## Framing and camera
 
@@ -62,6 +65,8 @@ Corrections the operator has given that apply to **every** video, every brand, f
 - 2026-09-20 - **`loudnorm` silently abandons linear mode when the gain it needs would breach the TP ceiling**, and dynamic mode is CONTENT-dependent - two cuts of identical material landed 2.8 LU apart (-15.1 vs -17.9) off near-identical measurements. Check it: if `target_I - measured_I` exceeds `target_TP - measured_TP`, you are in dynamic mode and the result is not reproducible. This is the real cause of "chasing loudness is non-monotonic".
 - 2026-09-20 - **A/B variants of one video must be loudness-matched to each other**, or the louder cut wins for a reason that has nothing to do with the edit. Measure both and trim one with a static gain plus a limiter; never ship a test where the only controlled variable is not the only variable.
 - 2026-09-20 - `loudnorm`'s JSON summary prints at INFO level. Running the measurement pass with `-v error` swallows it and the parse dies with "substring not found". Use `-hide_banner -nostats`, and assert the JSON parsed before using it.
+- 2026-09-20 - **`alimiter`'s default 5ms attack lets transients straight through**, and the AAC encoder then overshoots them: the same ceiling that measured -1.2 dBTP on one ad measured **+0.4 dBFS** on another. `attack=1:release=60` fixed it at the identical `limit`, with no loudness cost. Lowering the ceiling treats the symptom and costs loudness; fix the attack.
+- 2026-09-20 - Always re-measure the DELIVERED file, never the premaster plus arithmetic. A limiter doing real work pulls integrated loudness below where the gain says it should land - three ads aimed at -14.4 arrived at -15.1, -15.2 and -14.9 - and LRA tells you how hard it worked.
 
 ## Captions
 
@@ -77,6 +82,10 @@ Corrections the operator has given that apply to **every** video, every brand, f
 - 2026-09-20 - Correct a mis-heard transcript word by FRAME-ANCHORED override, never by global replace - fixing "alive" to "live" must not touch a place the speaker really said "alive".
 - 2026-09-20 - One generator for one set of captions. The burned captions and the sidecar `.srt` must come from the same cue list, speed-corrected for the delivered file; two generators drift and nobody notices until a viewer turns CC on.
 - 2026-09-20 - A "blip" or "weird transition" a reviewer reports may be the CAPTION dropping out, not the picture cutting. Measure YMAX across the region first: burned captions are usually the only pure white in frame, so a 255 -> 237 dip with no scene change localises it in one pass.
+- 2026-09-20 - Split at EVERY internal sentence boundary, with no minimum-length escape. The version that only split when both halves cleared the three-word minimum left exactly the block the rule exists to prevent - "...WILL CHANGE YOUR LIFE. YOUR" - because the second half was one word. Correctness first; a one-word half is fixed by the runt pass or left standing.
+- 2026-09-20 - **A runt may never merge ACROSS a sentence boundary**, in either direction. Merging is how the tail of one sentence ends up heading the next plate, and it undoes the split pass that just ran. A short sentence alone on its own plate is fine.
+- 2026-09-20 - Never break inside a numeric series. "2, 5, 10 years" has a comma after "2" that fires every punctuation rule, and the hook then arrives across two plates.
+- 2026-09-20 - Assert the caption rules in the generator instead of re-reading the printout. A rule that is only checked by eye is a rule that ships broken on the video nobody re-read.
 
 ## Graphics
 
@@ -88,6 +97,11 @@ Corrections the operator has given that apply to **every** video, every brand, f
 - 2026-09-20 - GSAP's "power2" is CUBIC, not quadratic. An ease chosen for a transition that must cover a join races through the middle - power2.inOut left a full-frame band opaque for under two frames where power1.inOut gave four.
 - 2026-09-20 - A group photo takes most of the frame for a few seconds or it does not go in at all; at lower-third size it is a smudge. Crop it to the card's aspect DELIBERATELY - a centre crop removed the subject from his own photo, because he stood at 83% across it.
 - 2026-09-20 - Caption a photograph only as accurately as you can defend. "A recent workshop cohort" overclaims when the people in it attended a different programme; say what is true of all of them.
+- 2026-09-20 - **A full-screen card CUTS on and dissolves off.** Fading one on crosses whatever caption is still up, so for a fifth of a second the caption shows through a half-present card - reported as "a weird-looking edit", and correctly. Cutting OFF a full-screen graphic back to a face reads as a mistake, so keep the exit.
+- 2026-09-20 - **Time a full-screen card to WHOLE caption cues**, not to a frame you picked. A card that half-covers a cue paints the caption and then slides over it. Derive start and end from the first and last cue it replaces, and assert that every cue it overlaps is one it fully covers.
+- 2026-09-20 - **The graphic must say what the sentence says.** A diagram showing four boxes under "your money goes to one of three places" is worse than no diagram: the viewer stops listening and starts counting. When the built graphic and the line disagree, the line wins and the graphic gets rebuilt.
+- 2026-09-20 - End a graphic a beat after its LAST element lands, not at the end of the thought. Measure the gap from final element to exit: 118 frames of a finished, motionless diagram is what "on way too long" means, and it is a number you can check before rendering.
+- 2026-09-20 - An animation that vanishes leaves no evidence it happened. When money, counters or tokens travel into a target, the target must KEEP something - a fill, a count, a state change - or the frame after the payoff looks identical to the frame before it.
 
 ## Structure and offer
 

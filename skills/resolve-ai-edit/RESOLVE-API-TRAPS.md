@@ -233,6 +233,29 @@ word-level timecodes — the basis for both cut lists and caption cues.
 sentence, "decisions at the whiteboard level" came back as "decisions at the end of the day".
 Read transcripts before trusting them, especially across pauses.
 
+**`Transcription` is a dict, not an object.** The stubs declare it as a `TypedDict`, so
+`tr.segments` raises and `tr["segments"]` works. Same for every `TranscriptionSegment` and
+`TranscriptionWord` inside it.
+
+**When `MediaPoolItem.TranscribeAudio()` still returns `False`, go via a timeline.**
+`Timeline.CreateSubtitlesFromAudio()` works on the same media in the same session where the
+clip-level call refuses, including on a freshly imported file. And it takes settings:
+
+```python
+tl.CreateSubtitlesFromAudio({"language": resolve.AUTO_CAPTION_ENGLISH,
+                             "charsPerLine": 1,          # 1 char/line -> one word per cue
+                             "lineBreak": resolve.AUTO_CAPTION_LINE_SINGLE, "gap": 0})
+# then read GetItemListInTrack("subtitle", 1): GetStart()/GetEnd()/GetName() per word
+```
+
+**`charsPerLine: 1` is a word-level aligner.** This is the tool for re-timing a window the
+clip transcript got wrong - a clip head, or a retake the aligner buried in "(...)". Build a
+throwaway timeline holding just that range, caption it at 1 char per line, add the range's
+start frame back to every result, then delete the timeline. It takes about a minute and it is
+the only way to get real timings for words the transcript does not contain.
+
+Both need a language: with `transcriptionLanguage` left at `auto`, transcription is refused.
+
 ## `AddTransition` does NOT shift the timeline when handles exist
 
 A centred cross dissolve normally shortens a timeline by its own duration, which would move
