@@ -103,6 +103,7 @@ Run this every session before touching anything. Report results as a short block
 
 - Read `LEARNINGS.md` from the skill folder (`~/.claude/skills/resolve-ai-edit/LEARNINGS.md`). It holds every correction the operator has given on past videos. Treat its contents as binding instructions, ranking below this file but above your own defaults.
 - Read `templates/tools/README.md` and copy `templates/tools/build_srt.py` into the project's `tools/` on any job with burned-in captions. **Resolve's subtitle track exposes no styling to the API**, so captions are generated from a cue table and burned in from a composition; the template carries the guards that stop bad captions shipping.
+- **Read `AUDIO-PLAYBOOK.md` whenever audio is the note.** Echo, level, balance between speakers, loudness. It is ordered as a procedure: fix the source with the right tool (Voice Isolation, not an expander), set level in the timeline where the operator can hear it, trim on the way out, never boost into a limiter.
 - **Read `PIPELINE.md` from the skill folder before your first render.** It is the wiring diagram: three programs, not one; what each stage outputs and where; why a "Complete" job in Resolve is not a finished video; the per-project `tools/` module layout; how variants are built as an ORDER over one beat table; and the cheap verification loops. Everything in it cost a cycle to learn.
 - Read `RESOLVE-API-TRAPS.md` from the skill folder. It holds verified Resolve 21.1 API behaviour that contradicts the documented stubs — silent write failures, `ImportMedia` signatures, keyframing via Fusion, subtitle handling, render settings. Every entry there cost a debugging cycle on a real job; do not rediscover them.
 - Confirm the project name, the target bin, and the raw media location. Never guess a path from a partial folder name without echoing back what you found and what you are about to touch.
@@ -183,6 +184,9 @@ You run this. Then the operator runs it. Both.
 | Any type | The last beat ends where the mouth closes, not where the transcript's last word is timed |
 | Paid ad | The hook lands inside 3 seconds with no ramp-up. Brand appears inside 5. The CTA is on screen long enough to read aloud twice. Every claim has a cleared marker |
 | Testimonial | No sentence assembled from two takes. Every stated figure is marked. Written permission is confirmed, or flagged as outstanding |
+| Any type with inserts or >1 speaker | **Every speaker's region measured separately and within ~1 LU of the others.** Programme loudness on target is not enough - a host 12.5 dB under the inserts reads as "really clear, then quiet" |
+| Any type | **Crest reported alongside LUFS** (p50/p95/p99/max of the 50ms peak envelope). p95 and p99 within a dB of each other means over-limited |
+| Any type shot in a hard-surfaced room | Voice Isolation applied at ~85, not an expander or gate. See `AUDIO-PLAYBOOK.md` |
 | Screen recording | No credential, token, email address, client name or private data visible in any frame of the capture |
 | Multi-platform | One export per aspect ratio, each framed deliberately. A single master handed over for someone else to crop is not a delivery |
 

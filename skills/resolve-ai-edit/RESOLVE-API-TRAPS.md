@@ -293,6 +293,39 @@ around them graded correctly.
 **And always read the LUT back** — `graph.GetLUT(1)` — rather than trusting the return value
 alone. `SetLUT` returning `True` is the weaker of the two signals.
 
+## Voice Isolation is the de-reverb, and it IS scriptable
+
+Studio's neural Voice Isolation removes room reverb properly. Nothing in ffmpeg comes close, and
+every dynamics trick you might reach for instead (expander, gate, "duck the tails") is worse: it
+hides reverb by removing the dynamics that make speech sound alive.
+
+Measured on one hotel-corridor testimonial, using envelope dip depth as the proxy (higher = less
+reverb filling the gaps between syllables):
+
+| | dip |
+|---|---|
+| untreated | 31.8 |
+| a tuned downward expander | 33.4 |
+| **Voice Isolation @ 100** | **36.8** |
+| the same shoot's clean room, for reference | 36.0 |
+
+It is exposed on both the track and the clip:
+
+```python
+tl.GetVoiceIsolationState(trackIndex)          # -> {"isEnabled": bool, "amount": int}
+tl.SetVoiceIsolationState(1, {"isEnabled": True, "amount": 85})
+item.GetVoiceIsolationState() / item.SetVoiceIsolationState(state)   # per clip
+```
+
+`amount` is 0-100. **Blackmagic's own guidance is ~85**; 100 can introduce watery artifacts on
+sibilants. Start at 85, and only go higher if the operator asks after listening.
+
+**Render the audio ALONE to apply it** — `ExportVideo: False, ExportAudio: True` with the
+"Audio Only" preset takes about a minute for an eight-minute timeline, versus half an hour for a
+full render. Then mux it onto the finished video with `-c:v copy`, which leaves the picture
+bit-identical (verify with an `-f md5` on the video stream). There is almost never a reason to
+re-render video because audio changed.
+
 ## `ExportCurrentFrameAsStill` is the fast verification loop
 
 ```python
