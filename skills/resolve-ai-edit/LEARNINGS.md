@@ -91,6 +91,8 @@ Corrections the operator has given that apply to **every** video, every brand, f
 
 ## Structure and offer
 
+- 2026-09-20 - **Ask the client what each spoken offer-word MEANS before labelling a deliverable.** "Workshop" and "training" were not interchangeable: plain "workshop" was their PAID product, and only "training", "free training" or "free workshop" meant the free one. A reasonable-sounding house rule ("label it free unless he says paid") mislabelled a delivered ad in the other direction, and made a whole batch look unroutable to the paid offer when most of it was fine. The label is a property of the OFFER, not an inference from the words.
+- 2026-09-20 - Offer wording is a per-TAKE decision, not per clip. The same speaker drifts between "training" and "workshop" across takes of one read; the take you cut sets the label.
 - 2026-09-19 - A spoken "attend my training" or "join the workshop" IS a complete call to action for a paid social ad. Do not treat a missing "link below" as a missing CTA; on Meta the click goes to the link.
 - 2026-09-19 - For paid social, a different body under the same hook is a DIFFERENT ad, not another take. Decompose footage into hook / body / CTA and count deliverables that way before quoting a number.
 - 2026-09-19 - Verify a claim about footage by sampling frames across the whole clip, never from one frame. A clip that looked like a blank whiteboard at its midpoint had the thesis line written onto it.
