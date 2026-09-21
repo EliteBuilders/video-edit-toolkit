@@ -21,14 +21,17 @@ New to this repo? Read in this order:
    human watches. **Resolve's render queue never shows you a finished video** — that one fact
    confuses everybody once.
 2. **`skills/resolve-ai-edit/SKILL.md`** — the six gated stages and the QA checklist per video type.
-3. **`skills/resolve-ai-edit/AUDIO-PLAYBOOK.md`** — what to do when audio is the note, in order.
+3. **`skills/resolve-ai-edit/VSL-PLAYBOOK.md`** — the ordered procedure for long-form sales
+   video, the most expensive type to get wrong. Settle it on a still, in a text file, or in the
+   timeline — before rendering a frame.
+4. **`skills/resolve-ai-edit/AUDIO-PLAYBOOK.md`** — what to do when audio is the note, in order.
    Echo, level, speaker balance, loudness. Every number in it was measured and every mistake in
    it was actually made.
-4. **`skills/resolve-ai-edit/LEARNINGS.md`** — craft rules earned from real corrections, grouped
+5. **`skills/resolve-ai-edit/LEARNINGS.md`** — craft rules earned from real corrections, grouped
    by theme. Binding.
-5. **`skills/resolve-ai-edit/RESOLVE-API-TRAPS.md`** — verified Resolve 21.1 behaviour that
+6. **`skills/resolve-ai-edit/RESOLVE-API-TRAPS.md`** — verified Resolve 21.1 behaviour that
    contradicts the documented stubs. Silent write failures, mostly.
-6. **`skills/resolve-ai-edit/templates/tools/`** — a caption generator and a delivery script with
+7. **`skills/resolve-ai-edit/templates/tools/`** — a caption generator and a delivery script with
    the traps already fixed. Copy them into a project rather than writing your own.
 
 ## It carries no client
