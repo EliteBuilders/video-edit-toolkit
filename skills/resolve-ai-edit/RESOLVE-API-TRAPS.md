@@ -256,6 +256,71 @@ the only way to get real timings for words the transcript does not contain.
 
 Both need a language: with `transcriptionLanguage` left at `auto`, transcription is refused.
 
+## Voice Isolation is accepted, reported back, and then silently discarded
+
+`SetVoiceIsolationState` returns `True` and `GetVoiceIsolationState` reads the new value back
+immediately — and the setting is gone minutes later, with the render carrying untreated audio.
+Three ads were rendered "with Voice Isolation" this way; two came back **bit-identical** to the
+untreated premaster. The read-back proves nothing.
+
+What actually sticks:
+
+```python
+resolve.OpenPage("fairlight")            # REQUIRED, like OpenPage("media") for transcription
+time.sleep(1)
+project.SetCurrentTimeline(tl)
+tl.SetVoiceIsolationState(1, {"isEnabled": True, "amount": 85})      # the track
+for it in tl.GetItemListInTrack("audio", 1):                          # AND every clip
+    it.SetVoiceIsolationState({"isEnabled": True, "amount": 85})
+```
+
+**Then prove it from the file, not from the API.** Render audio only and compare the decoded
+PCM against the untreated render:
+
+```bash
+ffmpeg -v error -i untreated.mp4 -map 0:a -f s16le -ac 1 -ar 16000 - | md5
+ffmpeg -v error -i treated.mp4   -map 0:a -f s16le -ac 1 -ar 16000 - | md5   # must DIFFER
+```
+
+Re-assert it immediately before every render. It reverts across page changes and timeline
+switches.
+
+## `ExportVideo` sticks from a previous audio-only render
+
+After any audio-only render, `ExportVideo` stays `False` on that project. Passing
+`FormatWidth`/`FormatHeight` in a later call does NOT turn it back on, `SetRenderSettings`
+returns `True`, and the job renders a 1.4 MB audio-only file that is easy to mistake for a
+finished video. Setting it in its own call works where setting it alongside other keys did not:
+
+```python
+project.LoadRenderPreset("H.264 Master")
+project.SetCurrentRenderFormatAndCodec("mp4", "H264")
+project.SetRenderSettings({"ExportVideo": True})     # on its own
+project.SetRenderSettings({"TargetDir": ..., "CustomName": ...})
+job = project.AddRenderJob()
+assert project.GetRenderJobList()[-1]["IsExportVideo"]      # the job dict is the truth
+```
+
+`GetRenderJobList()` returns the resolved settings per job — `IsExportVideo`, `VideoCodec`,
+`FormatWidth`, `MarkIn`/`MarkOut`. Check the job, never the call's return value.
+
+Related: `SetCurrentRenderFormatAndCodec("mp4", "H264")` can leave the codec at something else
+entirely (`APVYUV422_10` here). `LoadRenderPreset` first, then set format and codec, then read
+`GetCurrentRenderFormatAndCodec()` back.
+
+## Capture an operator's grade with CopyGrades, and bake it with ExportLUT
+
+When the operator grades a clip themselves, do not retype their wheel values — copy the node:
+
+```python
+src.CopyGrades(list_of_target_timeline_items)     # replaces node 1, keeps transform/sizing
+src.ExportLUT(resolve.EXPORT_LUT_33PTCUBE, path)  # the portable artifact for the rest of a batch
+```
+
+`CopyGrades` leaves `Pan`/`Tilt`/`ZoomX`/`Scaling` untouched, so framing survives, and it clears
+a LUT the targets had on that node — which is correct when the operator graded from raw, and
+wrong if you meant to stack. Check `GetLUT(1)` afterwards to see which happened.
+
 ## `AddTransition` does NOT shift the timeline when handles exist
 
 A centred cross dissolve normally shortens a timeline by its own duration, which would move

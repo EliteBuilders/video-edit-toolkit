@@ -34,6 +34,8 @@ Corrections the operator has given that apply to **every** video, every brand, f
 - 2026-09-20 - **The transcript's first word is anchored to the SEGMENT start, not to the word.** Cutting an in-point to it ships whatever is in front of the voice - on one ad, the slate call "action" plus two full seconds of room tone, on the hook. The word after it gives the game away: "If" at frame 0 and "you're" at frame 51 is not speech. Take every clip's first in-point from `silencedetect` on the audio, never from the transcript.
 - 2026-09-20 - **An aligner collapses a retake into a single "(...)"** when its words duplicate a take it has already transcribed, so the retake exists in the audio, is invisible in the transcript, and gets NO captions. A "(...)" spanning several seconds between two halves of one sentence is the signature. Re-transcribe that window in isolation to recover it - and expect different words: take 1 was "Are you working with a business owner", take 2 was "Are you an advisor working with business owners".
 - 2026-09-20 - Measure a suspect fragment with `volumedetect`, not `ebur128`. EBU integrated needs 400ms blocks and returns -70 LUFS on anything shorter, which reads as silence; a 0.37s "word" that measured -70 was really a -46 dB bump the aligner had hallucinated a word onto.
+- 2026-09-20 - **Only a DISCONTINUOUS cut can cut a word in half.** Where beat N's src_out equals beat N+1's src_in the audio runs straight through and speech across the join is correct; flagging those buries the joins that matter. Check the clip head, the tail, and every graft, and assert the loudest envelope sample within +-2 frames is below about -42 dB. One graft shipped with -24 dB on one side and -20 on the other, both inside the word "below", and the "w" was simply gone.
+- 2026-09-20 - When a take has several attempts, **transcribe the whole CTA region before choosing one**. Four attempts at one call to action looked like two in the transcript; the only complete, usable one was the fourth, and its first word was missing from the transcript entirely. Splicing two half-takes to avoid a bad read is how a word gets cut in half.
 
 ## Framing and camera
 
@@ -52,6 +54,8 @@ Corrections the operator has given that apply to **every** video, every brand, f
 - 2026-09-20 - Estimate a white point from every bright, low-saturation pixel in the frame, never from a sample box placed by eye. Hand-placed boxes landed on a shirt, on title text and on a blue graphic across three attempts, each time giving a confident wrong number.
 - 2026-09-20 - If the whole-frame white point finds too few qualifying pixels, do NOT fall back to hand-picked patches, and do NOT lower the threshold until something passes - what passes will be the subject's clothing. Take the correction from a sibling clip of the same setup and verify by eye.
 - 2026-09-20 - Match the grade to what the footage IS, not to the project's house look. Flat log footage needs contrast and saturation; already-full-range camera or webcam footage needs white balance and nothing else, and the house look would crush its blacks and blow its highlights.
+- 2026-09-20 - When the operator grades a shot themselves, copy the node and bake a LUT from it; do not retype the wheel values. And check what they graded ON - a grade built on the raw clip REPLACES an existing LUT, it does not stack, and applying it on top produces a look neither of you has seen.
+- 2026-09-20 - Verify a new grade with numbers as well as eyes: whole-frame white point, plus the percentage of clipped and crushed pixels. One operator grade moved a shot from B-R +13 (visibly blue) to +0.3 with clipping unchanged - which is the evidence that "more natural" was real and not just brighter.
 
 ## Audio
 
@@ -67,6 +71,7 @@ Corrections the operator has given that apply to **every** video, every brand, f
 - 2026-09-20 - `loudnorm`'s JSON summary prints at INFO level. Running the measurement pass with `-v error` swallows it and the parse dies with "substring not found". Use `-hide_banner -nostats`, and assert the JSON parsed before using it.
 - 2026-09-20 - **`alimiter`'s default 5ms attack lets transients straight through**, and the AAC encoder then overshoots them: the same ceiling that measured -1.2 dBTP on one ad measured **+0.4 dBFS** on another. `attack=1:release=60` fixed it at the identical `limit`, with no loudness cost. Lowering the ceiling treats the symptom and costs loudness; fix the attack.
 - 2026-09-20 - Always re-measure the DELIVERED file, never the premaster plus arithmetic. A limiter doing real work pulls integrated loudness below where the gain says it should land - three ads aimed at -14.4 arrived at -15.1, -15.2 and -14.9 - and LRA tells you how hard it worked.
+- 2026-09-20 - **Voice Isolation belongs on ad footage too, not only on obviously echoey rooms.** Measured on matched frames, VI at 85 left speech within 0.4 dB and dropped the gaps between words by 6-8 dB. Compare the SAME frame indices in both files: a percentile spread computed independently per file is meaningless once VI has pushed the quiet frames below the measurement floor.
 
 ## Captions
 
