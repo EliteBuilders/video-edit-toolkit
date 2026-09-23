@@ -26,8 +26,8 @@ review and the render stay here.
 | Sound effects, music, icons, logos, images | `media-use` (`resolve --type sfx|bgm|icon|logo|image`) |
 | Worked, full compositions to study | `registry/examples/` in the HyperFrames clone, or `hyperframes init <dir> --example <name>` |
 
-**Search the catalog before hand-building any named move.** 383 items, 180 blocks and 221
-components at v0.8.48, searchable offline. Wiring a tested component and restyling it to
+**Search the catalog before hand-building any named move.** 383 items, 160 blocks and 223
+components at v0.8.68, searchable offline. Wiring a tested component and restyling it to
 `BRAND.md` beats writing the same move from scratch, and it is where most of the polish in a
 "designed" edit comes from. Restyle every item: a catalog default left as-is reads as a template.
 
