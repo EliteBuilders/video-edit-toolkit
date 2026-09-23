@@ -135,9 +135,75 @@ variants to each other**, or the louder cut wins a test for a reason that is not
 ## 5. Order of operations
 
 1. **Fix the source** — Voice Isolation, noise reduction, level-match inserts to the host
-2. **Set the level in the timeline**, with the operator listening
+2. **Set the level in the timeline**, with the operator listening. Sound effects (§6) and the
+   music bed (§7) are already in the timeline at this point, so they are heard in context and
+   measured in the programme, never added after the loudness pass
 3. **Render audio only**, pad to the video duration, apply any speed change
 4. **Balance per speaker region** if any two differ by more than ~1 LU
 5. **Trim** to the peak ceiling. No boosting, no limiting unless explicitly agreed
 6. **Mux with `-c:v copy`** and prove the video stream is untouched by MD5
 7. **Report LUFS, true peak, LRA and crest** — not just LUFS
+
+---
+
+## 6. Sound effects
+
+Sound effects come **from the graphics plan, never free-placed**. Each one belongs to something
+the viewer can see land: a card entering, a row sliding in, a check popping, a number striking
+through, a cut to a full screen. A sound with nothing under it is a mistake the viewer hears
+immediately; a one-shot AI edit shipped scissor sounds where nothing was being cut.
+
+**The vocabulary.** One sound per kind of event, the same sound every time in a video:
+
+| Visible event | Sound | Bundled name |
+|---|---|---|
+| Cut to a full-screen scene | soft whoosh-in or low hit | `whoosh`, `impact-bass-1` (sparingly) |
+| Panel or card enters | short whoosh | `whoosh-short` |
+| Row, chip or item lands | tick or click | `click`, `pop` |
+| Check mark or success state | light chime | `ping`, `chime` |
+| Strike-through or correction | quick swipe | `whoosh-short` |
+| Count-up running | nothing, or `typing` very low | — |
+| Exits | **nothing** | — |
+| Captions | **nothing, ever** | — |
+
+**Rules.**
+- **On the event frame, ±2 frames.** Write every sound into the cue's `sfx` list in
+  `graphics-plan.json`; `graphics_qa.py` fails any sound not on a cue's start, end or `events`.
+- **Under the voice.** Start at about 18 dB below dialogue peak and adjust by ear with the
+  operator. Never on a stressed syllable: move the sound, not the word.
+- **Sparse.** At most one sound per ~2 s on average, and not on consecutive list items faster
+  than ~0.4 s apart: the group gets one sound on its first item.
+- **Retimed graphic, regenerated sounds.** Any change to a cue's timing orphans its sounds.
+  Re-derive them from the plan and re-run the gate.
+- Own track: **A3 `SFX`**, below dialogue, above music. Placed through the MCP at the frame.
+
+**Where the sounds come from.** In order: the operator's `assets/sfx/` library, then the
+bundled HyperFrames set (21 files, free, offline, with a `manifest.json` of placement hints):
+
+```bash
+ls "$(cat .hyperframes-path)/skills/media-use/audio/assets/sfx/"
+```
+
+`media-use` can also retrieve from HeyGen's online library, which needs a HeyGen login. Record
+the source of every sound in the plan so licensing is traceable.
+
+---
+
+## 7. Music bed
+
+**Opt-in per video**, named in the brief with the exact file. Never picked silently.
+
+- **Trim to where the music actually starts.** `silencedetect` on the track and cut the lead-in
+  silence so the bed starts on sound, not on nothing.
+- **Level relative to the voice, measured.** Start the bed about **20 LU under** the dialogue's
+  integrated loudness (dialogue at −14 LUFS → bed near −34 LUFS), then set it by ear with the
+  operator. A flat clip gain of about −18 to −20 dB on a mastered track lands in that range;
+  measure rather than trust it.
+- **Fade in over ~1 s, out over ~2 s**, and end on a musical phrase if one falls within a
+  second of the programme end.
+- **Ducking is a separate opt-in.** A bed that is already 20 LU under rarely needs it.
+- Own track: **A4 `MUSIC`**. Then run the loudness pass (§4–5) on the whole programme.
+- **Licensing.** The operator's own licensed track, or a library that clears YouTube Content ID
+  for their channel. A HeyGen catalog track (`media-use --type bgm`) needs its licence checked
+  for the platform before it ships. Note the source in the delivery list.
+

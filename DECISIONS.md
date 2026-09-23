@@ -135,6 +135,28 @@ says nothing about uploaded video files, storage, deletion, or training on foota
 | AutoPod | $29/mo, runs inside Resolve Studio. Revisit only if multicam podcast switching becomes regular |
 | Google Drive auto-transcripts | Segment-level timing only. Fine for show notes and repurposing, useless for deciding a cut point |
 
+## The motion system: wire the catalog, gate the render
+
+**Decided 23 September 2026:** graphics get a written motion vocabulary, a full-screen scene
+library, a deterministic QA gate, and sound effects derived from the graphics plan
+(`MOTION.md`, `AUDIO-PLAYBOOK.md` §6–7, `templates/tools/graphics_qa.py`).
+
+Read against four September 2026 videos on agent editing: Creator Magic (`V7CtHz8JFWA`), Andy
+Diep (`FTnasBfSdmU`), and Jason Cooperson's Claude and GPT-6 Astra one-shot edits
+(`fSJh8etPngU`, `t2fsAXNXdrA`), plus frames pulled from the last two. What they agree on: the
+look comes from a **project folder of locked presets, rules and pre-built parts**, not from
+the model or the prompt. The one-shot edit was praised overall and failed on exactly the
+things a gate catches: an animated wall of text, sound effects with nothing under them, a
+drawn stand-in where a real capture of the repo belonged.
+
+- **Catalog over hand-building.** HyperFrames ships ~380 blocks and components and its own
+  animation rules locally. Its skills are installed but subordinate: they build graphics,
+  this skill runs the edit.
+- **The gate measures the render, not the plan.** The caption guards never covered graphics
+  and an "8-frame hold" shipped. Holds are measured on opacity from the alpha channel.
+- **Timing numbers are defaults, not findings.** Nothing in `MOTION.md` §1 has been measured on
+  this operator's videos yet. Correct them in place as notes arrive.
+
 ## The benchmark
 
 **The operator's manual baseline is 6 to 8 hours for a simple 10-minute video.** Every edit reports

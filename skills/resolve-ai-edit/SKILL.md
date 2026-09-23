@@ -17,7 +17,7 @@ this map is detail for a phase; this is the shape of a run.
 | **1** | **Intake** | What type of video, what platforms, whose it is, what it must make happen. Read the brand, the brief, the style record and the references | The four answers are echoed back and the preflight block is clean |
 | **2** | **Cut** | Ingest, transcribe, build a cut list as *text*, then build the timeline | The operator approves the cut list, then the rough cut |
 | **3** | **Polish** | Pacing, B-roll placement, grade, audio, captions | The assembly is approved |
-| **4** | **Graphics** | Reference loop first, then build motion graphics as code, place, screenshot, check | Every graphic has been looked at, not just built |
+| **4** | **Graphics** | Plan anchored to words, catalog first, build as code, run the QA gate (three rounds max), then sound effects and the music bed. Procedure in `MOTION.md` | The gate passes and every graphic has been looked at, not just built |
 | **5** | **Deliver** | QA against the type's checklist, human review, one render per platform, debrief | Files are in `output/` and the debrief is filed |
 
 **The full run, in one command.** Paste this to start:
@@ -105,8 +105,9 @@ Run this every session before touching anything. Report results as a short block
 - Read `LEARNINGS.md` from the skill folder (`~/.claude/skills/resolve-ai-edit/LEARNINGS.md`). It holds every correction the operator has given on past videos. Treat its contents as binding instructions, ranking below this file but above your own defaults.
 - Read `templates/tools/README.md` and copy `templates/tools/build_srt.py` into the project's `tools/` on any job with burned-in captions. **Resolve's subtitle track exposes no styling to the API**, so captions are generated from a cue table and burned in from a composition; the template carries the guards that stop bad captions shipping.
 - **Read `VSL-PLAYBOOK.md` before any long-form sales video.** The ordered procedure and the review loop, written after one shipped in 12 renders and 18 rounds when it needed a fraction of that. Its whole thesis: settle everything that can be settled on a still, in a text file, or in the timeline, BEFORE rendering a frame.
-- **Read `AUDIO-PLAYBOOK.md` whenever audio is the note.** Echo, level, balance between speakers, loudness. It is ordered as a procedure: fix the source with the right tool (Voice Isolation, not an expander), set level in the timeline where the operator can hear it, trim on the way out, never boost into a limiter.
+- **Read `AUDIO-PLAYBOOK.md` whenever audio is the note, and before placing sound effects or a music bed (§6–7).** Echo, level, balance between speakers, loudness. It is ordered as a procedure: fix the source with the right tool (Voice Isolation, not an expander), set level in the timeline where the operator can hear it, trim on the way out, never boost into a limiter.
 - **Read `PIPELINE.md` from the skill folder before your first render.** It is the wiring diagram: three programs, not one; what each stage outputs and where; why a "Complete" job in Resolve is not a finished video; the per-project `tools/` module layout; how variants are built as an ORDER over one beat table; and the cheap verification loops. Everything in it cost a cycle to learn.
+- **Read `MOTION.md` before phase 4.** How graphics move, the full-screen scenes, cadence, real screen captures, the graphics plan, and the QA gate (`templates/tools/graphics_qa.py`). Copy `graphics_qa.py` and `window_grab.sh` into the project's `tools/` on any job with graphics.
 - Read `RESOLVE-API-TRAPS.md` from the skill folder. It holds verified Resolve 21.1 API behaviour that contradicts the documented stubs — silent write failures, `ImportMedia` signatures, keyframing via Fusion, subtitle handling, render settings. Every entry there cost a debugging cycle on a real job; do not rediscover them.
 - Confirm the project name, the target bin, and the raw media location. Never guess a path from a partial folder name without echoing back what you found and what you are about to touch.
 - Warn the operator once per session: **Resolve is locked while you are processing.** They cannot edit alongside you. Long jobs should be batched and run while they are away.
@@ -182,6 +183,7 @@ You run this. Then the operator runs it. Both.
 | Any burned-caption type | **No cue spans a cut**, no cue is under 3 words, no cue ends on a dangling function word, and no cue opens with the last word of the previous sentence. Assert all four in the generator — a reviewer spots one speaker's words on the next speaker's face immediately |
 | Any burned-caption type | **No frame between two cues is bare.** Butt adjacent cues and hand over in ~2 frames; a gap mid-sentence reads as a dropped frame, not as timing |
 | Any type with motion graphics | **Every graphic exits at the next sentence boundary** after its last element lands, derived from the word timings — not from a hand-picked frame |
+| Any type with motion graphics | **`graphics_qa.py` passes on the final overlay render**, report attached: face zone, caption zone, title safe, measured clean hold, full screens on whole caption cues, every sound effect on a visible event. A FAIL still open after round 3 is listed as an open flag, not waved through |
 | Any talking head | The speaker's whole head is in frame at **every** zoom level — check a frame from each beat, not just the widest |
 | Any type | The last beat ends where the mouth closes, not where the transcript's last word is timed |
 | Paid ad | The hook lands inside 3 seconds with no ramp-up. Brand appears inside 5. The CTA is on screen long enough to read aloud twice. Every claim has a cleared marker |
@@ -394,6 +396,10 @@ Whichever rung you land on, the clip gets imported to the media pool and placed 
 
 **The operator is not a video editor and does not build graphics.** You build them, as code. They describe and react. Never tell them to open Fusion, After Effects, or a template editor.
 
+**`MOTION.md` is the procedure for this phase**: motion timing, the full-screen scene library, cadence, real screen captures, the graphics plan and the QA gate. This section holds what graphics are; that file holds how they behave.
+
+**HyperFrames' own skills are tools of this phase, not a replacement for this skill.** `hyperframes`, `general-video` and `talking-head-recut` each describe themselves as the entry point for any video request. Inside a Resolve edit they are not: call `hyperframes-registry`, `hyperframes-animation`, `hyperframes-core`, `motion-graphics` and `media-use` to build a graphic or fetch a sound, and keep the cut, the gates, the review and the render here.
+
 ### The engine
 
 **HyperFrames.** Apache 2.0 renderer from HeyGen — `github.com/heygen-com/hyperframes`. You write the graphic as HTML and CSS with timing attributes, it renders deterministically through headless Chrome and ffmpeg. Fully local, free, no API key.
@@ -403,6 +409,7 @@ Whichever rung you land on, the clip gets imported to the media pool and placed 
 - **Always render with `--format mov`.** That gives ProRes 4444 with a real alpha channel, which drops straight onto an upper video track in Resolve. Do not use `webm` for alpha; it silently fails on Windows.
 - Output goes to the project's `graphics/` folder, then imports and places through the Resolve MCP at the marked timecode.
 - Ignore HyperFrames' hosted MCP. It needs a HeyGen account and renders on their infrastructure. The local CLI does the same job free.
+- **Search the catalog before building any named move.** Roughly 380 blocks and components ship in the clone and search offline: `node <hf>/packages/cli/bin/hyperframes.mjs catalog --query "<the move>" --json`, then `add <name>`. Restyle whatever you install to `BRAND.md`; a catalog default left as-is reads as a template. See `MOTION.md` §0.
 
 ### What stays native in Resolve
 
@@ -428,7 +435,7 @@ When the operator asks for a graphic, or when a marked moment needs one, **work 
 2. **Ask for the reference, or name the effect.** If the operator has an example in mind, ask them to send a screenshot. If they do not, propose a named effect from the kit below and describe it in one sentence so they can picture it.
 3. **Read the reference for its system, never copy the composition.** Extract the palette, type weights, layout logic, materiality, and timing. Then build the operator's own version in their brand. Do not reproduce someone else's specific design as theirs.
 4. **Show it before rendering.** Build it as a live HTML preview they can watch and publish that as an artifact. Iterating on a web page takes seconds; iterating on a rendered MOV takes minutes. Only render once they approve the look.
-5. **Render, place, screenshot, check.** After placing any graphic on the timeline, screenshot the viewer and actually look at it. Face overlap is the most reported failure in every source reviewed. Check overlap, safe margins, and whether it collides with the caption zone.
+5. **Render, gate, place, screenshot, check.** Run `graphics_qa.py` on the render first (`MOTION.md` §4c). After placing any graphic on the timeline, screenshot the viewer and actually look at it. Face overlap is the most reported failure in every source reviewed. Check overlap, safe margins, and whether it collides with the caption zone.
 6. **Add the approved graphic to the kit.** Once a graphic is approved it is a reusable component with swappable copy, not a one-off. Write it into `graphics/kit/` with a name and note what job it does.
 
 ### The starter kit

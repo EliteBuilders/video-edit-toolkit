@@ -91,6 +91,21 @@ if [ -d "$HF_DIR" ]; then
   say "-" "use the LOCAL CLI, not the hosted MCP — the hosted one needs a HeyGen account"
 fi
 
+echo "==> 2b/4 HyperFrames agent skills + reference tools"
+if [ -f "${HF_CLI:-}" ]; then
+  if [ -d "$HOME/.claude/skills/hyperframes-registry" ]; then
+    say "ok" "HyperFrames skills installed (catalog, animation rules, media-use)"
+  else
+    # Installs for Claude Code and Codex. resolve-ai-edit stays the entry point; see MOTION.md §0.
+    node "$HF_CLI" skills </dev/null >/dev/null 2>&1 \
+      && say "ok" "HyperFrames skills installed for Claude Code and Codex" \
+      || say "WARN" "skills install failed. Run by hand:  node $HF_CLI skills"
+  fi
+fi
+command -v yt-dlp >/dev/null 2>&1 \
+  && say "ok" "yt-dlp (pulls reference videos for frame study)" \
+  || say "WARN" "yt-dlp not found (optional, for reference study):  brew install yt-dlp"
+
 echo "==> 3/4  DaVinci Resolve MCP"
 if [ -d "/Applications/DaVinci Resolve" ]; then
   say "ok" "Resolve found in /Applications"
