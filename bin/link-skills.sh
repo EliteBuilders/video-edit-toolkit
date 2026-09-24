@@ -5,7 +5,7 @@
 # ~/.agents/skills/ (Codex). Idempotent.
 # Called by install.sh, and by this repo's own post-merge hook so that a
 # `git pull` that adds a skill makes it invocable without anyone remembering to
-# re-run the installer. Same model as elitebuilders-toolkit.
+# re-run the installer. Same model as local-seo-client-delivery.
 set -euo pipefail
 TOOLKIT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SKILLS_DIRS=("$HOME/.claude/skills" "$HOME/.agents/skills")
