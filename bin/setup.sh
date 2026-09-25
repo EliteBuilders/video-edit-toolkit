@@ -130,6 +130,35 @@ else
   FAIL=1
 fi
 
+echo "==> 3b/4 Video vision  (watch reference videos; local-only, pinned)"
+# claude-video-vision (MIT, github.com/jordanrendric/claude-video-vision): frame extraction +
+# transcription over MCP, so a reference VIDEO or YouTube link can be read for its graphics.
+# PINNED: its own plugin manifest runs `npx claude-video-vision@latest`, so every start would
+# run whatever was last published, unreviewed. 1.3.2 was audited 2026-09-25 (execFile only,
+# two deps, no install scripts; network = whisper model download, yt-dlp, opt-in cloud APIs).
+# LOCAL backend: nothing leaves the machine. Change VV_VERSION only after reading the diff.
+VV_VERSION="1.3.2"
+if ! command -v claude >/dev/null 2>&1; then
+  say "-" "claude CLI not found; skipped (optional)"
+elif claude mcp list 2>/dev/null | grep -q "claude-video-vision@${VV_VERSION}"; then
+  say "ok" "claude-video-vision@${VV_VERSION} already registered"
+else
+  claude mcp remove -s user claude-video-vision >/dev/null 2>&1 || true
+  claude mcp add -s user claude-video-vision -- npx -y "claude-video-vision@${VV_VERSION}" >/dev/null \
+    && say "ok" "registered claude-video-vision@${VV_VERSION} (user scope)" \
+    || say "MISS" "could not register; run: claude mcp add -s user claude-video-vision -- npx -y claude-video-vision@${VV_VERSION}"
+fi
+VVCFG="$HOME/.claude-video-vision/config.json"
+if [ ! -f "$VVCFG" ]; then
+  mkdir -p "$HOME/.claude-video-vision/models"
+  printf '{\n  "backend": "local",\n  "whisper_engine": "cpp",\n  "whisper_model": "medium.en",\n  "frame_resolution": 768\n}\n' > "$VVCFG"
+  say "ok" "local backend configured ($VVCFG)"
+else
+  say "ok" "config exists, left alone ($VVCFG)"
+fi
+command -v whisper-cli >/dev/null 2>&1 || say "-" "brew install whisper-cpp   (local transcription)"
+command -v yt-dlp >/dev/null 2>&1 || say "-" "brew install yt-dlp        (YouTube links)"
+
 echo "==> 4/4  Resolve settings you must set by hand"
 say "-" "Preferences > General > 'External scripting using' = Local"
 say "-" "  Without it the MCP connects but nothing can touch the timeline."

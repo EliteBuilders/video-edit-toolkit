@@ -229,3 +229,30 @@ were set when "a video" meant a 90-second ad and have never been tested at lengt
 project, so the 6-to-8-hour manual baseline remains a claim rather than a comparison, and every
 timing statement in this file is still inherited rather than measured on this machine. That is
 the one thing the next run should capture, and it costs nothing but writing six numbers down.
+
+---
+
+## Reference videos are read with an outside MCP, pinned and local
+
+**Decided 2026-09-25:** use `claude-video-vision` (github.com/jordanrendric/claude-video-vision,
+MIT) to read reference videos. Register it with `claude mcp add`, pinned to an audited version,
+on the local whisper backend. Do not vendor it, and do not use its plugin installer.
+
+- **Why an outside tool:** screenshots lose the motion, and motion is usually why a reference was
+  sent. The server finds the moments (scene changes, transcript) and shows them, YouTube links
+  included, with no custom code to maintain here.
+- **Why pinned:** its plugin manifest runs `npx claude-video-vision@latest`, which executes
+  whatever was last published every time it starts. 1.3.2 was audited from the published
+  tarball, not just the repo (execFile only, two dependencies, no install scripts, network only
+  for whisper models, yt-dlp and opt-in cloud APIs). Raise the pin in `bin/setup.sh` only after
+  reading the diff.
+- **Why local:** the Gemini backend is free and hears non-speech audio, but it sends the video's
+  audio to Google, and reference videos are often a client's or a competitor's.
+- **Why not vendored:** a copy goes stale and makes this repo maintain someone else's project.
+- **Its limit:** its drill-in takes whole-second timestamps, so it cannot time an animation to
+  the frame. `templates/tools/motion_timing.py` does that on the window it finds.
+- **Considered and not chosen: `bradautomates/claude-video` ("watch").** Far more stars, and good
+  at general video Q&A, but its local engine caps frames at 2 fps, which misses a 10-frame pop or
+  a 0.3s dissolve entirely. It also adds a SessionStart hook and a 1.5 GB WhisperX install, and
+  its recommended engine uploads the video to Google. For finding and timing animations, a
+  scene-change scan plus a full-frame-rate drill-in is the tool the job needs.

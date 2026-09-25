@@ -89,6 +89,11 @@ is three deliverables rather than one file someone crops later.
 - Animated captions need nothing extra — Resolve Studio ships Word Highlight, Slide In, Rotate,
   Lollipop and Statement on the subtitle track. **Do not rebuild in HyperFrames what Resolve
   already does.**
+- **Video vision** (optional, recommended): `claude-video-vision`, an MIT MCP server that pulls
+  frames and a transcript from a local video or a YouTube link, so a reference *video* ("I like
+  the animations in this") can be read, not just a screenshot. `setup.sh` registers it **pinned to
+  an audited version and on the local backend** (whisper.cpp; nothing leaves the machine). Its own
+  plugin installer floats on `@latest`; do not use it. Needs `whisper-cpp`, and `yt-dlp` for links.
 - Optional, and the only thing that costs money: AI B-roll generation, gated behind a cost
   estimate and an explicit yes.
 
@@ -115,7 +120,7 @@ To resume: *"pick up at polish"*. To run one piece: *"just build the cut list"*.
 
 ```
 ./install.sh        # symlink the skills
-./bin/setup.sh      # once per machine: Resolve MCP + HyperFrames + ffmpeg check
+./bin/setup.sh      # once per machine: Resolve MCP + HyperFrames + ffmpeg check + video vision
 ```
 
 `setup.sh` clones HyperFrames from `github.com/heygen-com/hyperframes` to `~/Tools/hyperframes`,

@@ -40,7 +40,9 @@ rather than trace.
 1. **Take the file.** Save it into the project's `reference/` folder, named
    `<YYYY-MM-DD>-<what-it-shows>.png`. A link gets a screenshot saved the same way, plus the URL
    recorded — links rot, and a style decision that cannot be re-examined is a rule with no reason.
-   If it is a video, save the frame that shows the thing, and note the timecode.
+   If it is a video or a YouTube link, run the **reference-video scan** (resolve-ai-edit, Step 0):
+   find every graphic moment, show the operator a numbered list, and for the ones they pick save a
+   5-10s clip plus a frame, note the timecodes, and measure the motion with `motion_timing.py`.
 2. **Ask one question: what about this?** A reference handed over without a reason is ambiguous —
    the same frame can be shown for its captions, its grade, its pacing or its layout. Do not guess.
    "The captions" and "the way they hold on the face" lead to entirely different extractions.
@@ -79,8 +81,10 @@ Two places a reference can go, and they are different:
 **Library intake**, when asked to add references:
 
 1. Read the library's `README.md` and `library.json`. New files arrive in `_inbox/`.
-2. Look at every new file. For a clip, extract frames across it and time the motion; for a
-   still, the motion is *inferred* and must be labelled so.
+2. Look at every new file. For a long video or a link, run the reference-video scan first and
+   keep only the moments the operator picks, cut to 5-10s clips. For a clip, time the motion with
+   `templates/tools/motion_timing.py` and record it as *measured* (frames, seconds, ease shape);
+   for a still, the motion is *inferred* and must be labelled so.
 3. File it by the **job** the graphic does: move it into the matching numbered folder, renamed
    `<what-it-shows>--<source-short>--<original-name>`. A reference that fits no job gets a new
    numbered folder and a new job in `library.json`.
