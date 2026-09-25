@@ -172,7 +172,18 @@ tools/window_grab.sh window "Finder" graphics/cap/folder.png                    
 ## 4. Phase 4, step by step
 
 **4a. Plan.** Read the locked cut's transcript and write `graphics/graphics-plan.json`
-(schema below) before building anything. Every cue anchored to a spoken word. Show the
+(schema below) before building anything.
+
+**Look it up in the operator's graphics library first.** If `.graphics-library-path` exists in
+this skill's folder, read `LIBRARY.md` in that folder. It is the operator's own swipe file of how
+other editors display information, filed by JOB (process and steps, comparison, spectrum and
+position, structure, who is speaking, proof, range, labels over the speaker, beats, screen and
+document), with the layout, the system worth taking, the motion and a build recipe for each. For
+every graphic in the plan, name its job, pick the library entry it borrows from, and write that
+entry's id in the plan item's `ref`. The operator can then see where each treatment came from.
+Take the system, never the design; vary treatments across the video (no entry more than ~4
+times). If the file is missing, ask where the library lives; do not invent a location. The
+library is private and lives outside this repo on purpose: it holds other people's frames. Every cue anchored to a spoken word. Show the
 operator the plan as a list, `time — scene or overlay — job — the words it carries`, and get a
 yes. Plans are cheap to change; renders are not.
 
@@ -244,6 +255,7 @@ timeline's frame rate. The gate reads it; the SFX step writes into it.
 |---|---|
 | `kind` | `overlay`, `fullscreen` or `caption`. Full screens skip the face and zone checks |
 | `zone` | Named screen area for overlays. Two overlays may not share one at the same time |
+| `ref` | The graphics-library entry id this treatment borrows from (4a), or `none` when it is original |
 | `zones.face` | x, y, w, h of the speaker's head **with hair and hands at rest**, measured from a still of each camera setup. Look at the still; do not guess. A cue can override with its own `face` |
 | `zones.captions` | Where captions live. Nothing but captions may enter it |
 | `words` | Words a viewer must read on this graphic. Sets the minimum clean hold (3 words/s, 1 s floor) unless `min_hold` is given |

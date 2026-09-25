@@ -1,6 +1,6 @@
 ---
 name: edit-style
-description: Capture an editing-style reference — a screenshot, a frame, a link, a clip someone liked or hated — read it for its system rather than its content, and write what was extracted into that client's EDIT-STYLE.md so the next edit starts closer. Use when the operator drops in an example and says "make it look like this", "I like how they do captions", "this is the vibe", "don't do what they did here", "here's a reference", "use this style", or hands over a screenshot mid-edit. Also use to review what a client's accumulated style record now says before starting an edit.
+description: Capture an editing-style reference — a screenshot, a frame, a link, a clip someone liked or hated — read it for its system rather than its content, and write what was extracted into that client's EDIT-STYLE.md so the next edit starts closer. Use when the operator drops in an example and says "make it look like this", "I like how they do captions", "this is the vibe", "don't do what they did here", "here's a reference", "use this style", or hands over a screenshot mid-edit. Also use to review what a client's accumulated style record now says before starting an edit, and when the operator says "add the new references to the graphics library" (the private cross-client swipe file of how to display information).
 triggers:
   - here's a reference
   - make it look like this
@@ -10,6 +10,9 @@ triggers:
   - edit style
   - style reference
   - what's this client's style
+  - add to the graphics library
+  - add the new references
+  - graphics reference
 ---
 
 # Edit Style
@@ -62,6 +65,31 @@ rather than trace.
    `CREATIVE-BRIEF.md` prohibition, or an earlier adopted entry, **quote both and ask which wins.**
    Never silently resolve it. A style record that quietly contradicts itself is worse than none,
    because the editor follows whichever line they read first.
+
+## The cross-client graphics library
+
+Two places a reference can go, and they are different:
+
+- **This client's `EDIT-STYLE.md`**, when the reference is about THIS client's look ("make ours
+  look like this").
+- **The operator's graphics library**, when it is a general example of how to DISPLAY a kind of
+  information, useful on any client ("add the new references to the graphics library"). Its
+  location is in `resolve-ai-edit/.graphics-library-path`; it is private and never committed here.
+
+**Library intake**, when asked to add references:
+
+1. Read the library's `README.md` and `library.json`. New files arrive in `_inbox/`.
+2. Look at every new file. For a clip, extract frames across it and time the motion; for a
+   still, the motion is *inferred* and must be labelled so.
+3. File it by the **job** the graphic does: move it into the matching numbered folder, renamed
+   `<what-it-shows>--<source-short>--<original-name>`. A reference that fits no job gets a new
+   numbered folder and a new job in `library.json`.
+4. Write its entry in `library.json`: `layout`, `system` (what is worth taking), `motion`
+   (measured or inferred), `build` (our own version, in MOTION.md scene and catalog terms), `use`,
+   `avoid`, `source`. Several frames of one graphic are ONE entry.
+5. Run `python3 _tools/build.py` in the library. It regenerates `LIBRARY.md` and `gallery.html`,
+   and fails on a missing file or lists anything not catalogued.
+6. Report what was added, by job, in a short table.
 
 ## What a good entry looks like
 
