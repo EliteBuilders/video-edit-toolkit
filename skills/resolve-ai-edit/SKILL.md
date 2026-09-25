@@ -104,6 +104,7 @@ Run this every session before touching anything. Report results as a short block
 
 - Read `LEARNINGS.md` from the skill folder (`~/.claude/skills/resolve-ai-edit/LEARNINGS.md`). It holds every correction the operator has given on past videos. Treat its contents as binding instructions, ranking below this file but above your own defaults.
 - Read `templates/tools/README.md` and copy `templates/tools/build_srt.py` into the project's `tools/` on any job with burned-in captions. **Resolve's subtitle track exposes no styling to the API**, so captions are generated from a cue table and burned in from a composition; the template carries the guards that stop bad captions shipping.
+- **Read `TESTIMONIAL-PLAYBOOK.md` before any testimonial, and before any clip, 4:5 ad or compilation cut from one.** The procedure and numbers from an 11-testimonial job: the four footage kinds and their framing and motion, cuts drawn by diarisation and snapped to silence, question cards and end cards, captions from the finished audio, and how an approved edit becomes every other format without re-litigating it. Its first rule: one video per review round, and the new version replaces the old.
 - **Read `VSL-PLAYBOOK.md` before any long-form sales video.** The ordered procedure and the review loop, written after one shipped in 12 renders and 18 rounds when it needed a fraction of that. Its whole thesis: settle everything that can be settled on a still, in a text file, or in the timeline, BEFORE rendering a frame.
 - **Read `AUDIO-PLAYBOOK.md` whenever audio is the note, and before placing sound effects or a music bed (§6–7).** Echo, level, balance between speakers, loudness. It is ordered as a procedure: fix the source with the right tool (Voice Isolation, not an expander), set level in the timeline where the operator can hear it, trim on the way out, never boost into a limiter.
 - **Read `PIPELINE.md` from the skill folder before your first render.** It is the wiring diagram: three programs, not one; what each stage outputs and where; why a "Complete" job in Resolve is not a finished video; the per-project `tools/` module layout; how variants are built as an ORDER over one beat table; and the cheap verification loops. Everything in it cost a cycle to learn.
@@ -187,7 +188,7 @@ You run this. Then the operator runs it. Both.
 | Any talking head | The speaker's whole head is in frame at **every** zoom level — check a frame from each beat, not just the widest |
 | Any type | The last beat ends where the mouth closes, not where the transcript's last word is timed |
 | Paid ad | The hook lands inside 3 seconds with no ramp-up. Brand appears inside 5. The CTA is on screen long enough to read aloud twice. Every claim has a cleared marker |
-| Testimonial | No sentence assembled from two takes. Every stated figure is marked. Written permission is confirmed, or flagged as outstanding |
+| Testimonial | No sentence assembled from two takes. Every stated figure is marked. Written permission is confirmed, or flagged as outstanding. **The start and end of every answer, clip and bite transcribed from the delivered audio** (`edge_check.sh`); no interviewer voice anywhere; every card edge read in the cue list |
 | Any type with inserts or >1 speaker | **Every speaker's region measured separately and within ~1 LU of the others.** Programme loudness on target is not enough - a host 12.5 dB under the inserts reads as "really clear, then quiet" |
 | Any type | **Crest reported alongside LUFS** (p50/p95/p99/max of the 50ms peak envelope). p95 and p99 within a dB of each other means over-limited |
 | Any type shot in a hard-surfaced room | Voice Isolation applied at ~85, not an expander or gate. See `AUDIO-PLAYBOOK.md` |
@@ -284,6 +285,12 @@ when a delivery is unusual; these move.
 and bottom ~420px — platform UI sits there and will cover a caption or a CTA. Check the actual
 overlay on the target platform rather than assuming.
 
+**Reframe from the original pixels, never by cropping the delivered master.** A 4:5 or 9:16 version
+is conformed again from the source (4K, the full phone frame, the full webcam height) with the same
+grade and frame mapping, so every cut list applies unchanged; a speaker who moves gets a
+face-tracked crop (`templates/tools/facetrack.py`). Chest-up, head centred, no bars; where the
+source is framed head-only, full source height is the ceiling. Say so.
+
 **One video for three platforms is three deliverables.** Build the master, then export each
 aspect ratio deliberately with its own framing pass. Never hand over a 16:9 file and let someone
 crop it — the crop puts the subject off-centre and the caption off-screen.
@@ -327,10 +334,29 @@ Rules:
 - Read the client's `compliance.md`. Regulated categories put whole words out of bounds
 - Cut a **6s bumper** version from the same master where the platform supports it
 - **Never** open on a logo sting. It is the most expensive three seconds in the format
+- **Ask which cut runs.** The structure above is the default for a scripted ad, but an operator
+  may run a whole testimonial or a multi-minute compilation as the ad. Here all 11 full
+  testimonials (1-5 min) and a 9.5-minute compilation ran as 4:5 ads. Duration is the operator's call
+- **A compilation ad is quick hits with hard cuts: no chapter or question cards.** Open with a text
+  overlay over the first speaker, not a full-page card (*"not a full-page card, because that's not
+  going to get attention"*), placed at chest height because faces sit in the top third
+- **4:5 layout moves everything up and in:** shorter caption lines (~30 characters), captions
+  and name tag low enough to clear a close-up face, and a group photo as a full-width band with the
+  words below it rather than cover-cropped behind them
 
 ### Testimonial
 
 **The subject is the proof. The edit's job is to get out of the way and make them credible.**
+**Procedure and numbers: `TESTIMONIAL-PLAYBOOK.md`.**
+
+Two forms, and they are built differently:
+
+- **The full testimonial (an interview, website or ad):** the answers in the order given, their
+  own spoken intro kept, the interviewer's questions as **full-screen cards between answers**
+  (dissolving on over the answer's last 8 frames and off over the next answer's first 9), a
+  thank-you **end card** on every one, and no interviewer audio anywhere. This form was approved
+  and shipped; it is the default when the operator hands over a whole interview.
+- **A cut spot (a clip, a bite, an ad cut short):** the structure below.
 
 1. **The result, first** — lead on the outcome or the strongest line, not on "tell us about your
    business." The best sentence is almost never the first one they said
@@ -353,6 +379,13 @@ Rules:
 - B-roll covers logistics, never the emotional beat. Cutting away from a face mid-admission
   throws away the thing you were given
 - **Get written permission on file** before a client testimonial ships. Flag it if unconfirmed
+- **Motion follows the footage kind.** Location camera: one slow move per shot, alternating a
+  wide push-in and a tight pull-out, no sideways pans. Vertical phone and webcam: static, with a
+  10-12% framing step where two answers join without a card
+- **Captions come from the finished audio**, and a word is only restored when a second
+  transcription hears it. A transcript word is not proof it was spoken
+- **Every other format is derived from the approved edit** (its ranges, fixes and clean audio),
+  never rebuilt. The approval carries over
 
 ### Case study
 
