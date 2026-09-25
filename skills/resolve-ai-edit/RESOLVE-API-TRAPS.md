@@ -412,7 +412,7 @@ sibilants. Start at 85, and only go higher if the operator asks after listening.
 "Audio Only" preset takes about a minute for an eight-minute timeline, versus half an hour for a
 full render. Then mux it onto the finished video with `-c:v copy`, which leaves the picture
 bit-identical (verify with an `-f md5` on the video stream). There is almost never a reason to
-re-render video because audio changed.
+re-render video because audio changed. **Skip the preset and `StartRendering()` returns `False` with the job sitting at `JobStatus: Ready`** - `SetRenderSettings({"ExportVideo": False, ...})` alone leaves it as a `.mov` job the renderer will not start (2026-09-23).
 
 ## `ExportCurrentFrameAsStill` is the fast verification loop
 
@@ -476,3 +476,52 @@ about twice the intended size and cropped — after a nine-minute render.
 
 **Probe the output before placing it:** `ffprobe -show_entries stream=width,height`. One second
 there saves a full re-render.
+
+## Inert Fusion, second confirmed occurrence — 2026-09-22, and the way around it
+
+A third timeline, `LEGACY v3`, built fresh at 1920x1080 in an existing 1920x1080 project,
+with the comp added AFTER the timeline was complete. Same result: **byte-identical renders**.
+
+The test, which is cheap and worth running before trusting any intra-clip move:
+
+```python
+# 1. render one frame with no comp
+# 2. add MediaIn1 -> Transform1(Size=2.0) -> MediaOut1
+# 3. render the same frame again
+# 4. md5 the two extracted PNGs
+```
+
+`Size = 2.0` is deliberately absurd — if Fusion were live the frame could not survive it.
+Both frames came back `f756ccf0e241beb1ebccebe8a5bc9ebc`.
+
+**Two new facts beyond the earlier entry:**
+
+- **It is not the output cache.** `GetIsFusionOutputCacheEnabled()` returned `-1` (unset);
+  setting both `SetFusionOutputCache(0)` and `SetColorOutputCache(0)` and re-rendering gave the
+  *same* md5 a third time. The cache theory is dead alongside the 4K-timeline one.
+- **The comp cannot be deleted either.** `DeleteFusionCompByName` returned `false` on repeated
+  separate passes and `GetFusionCompCount()` stayed at 1. Harmless here precisely *because* the
+  comp is inert, but it means a stray comp cannot be cleaned up through the API — build the
+  timeline without one rather than planning to remove it.
+
+### The workaround: do the move downstream
+
+Resolve renders **picture only**, the move is applied with ffmpeg, and the alpha overlay is
+composited afterwards so captions and cards stay still while the picture moves:
+
+```
+picture (overlay track disabled) -> scale=lanczos -> zoompan -> overlay -> premaster
+```
+
+`wise-vsl/tools/zoom_drift.py` emits the `z(on)` expression from the beat table as a flat sum of
+per-shot ramps, and `apply_drift.sh` runs the chain. Three things that matter:
+
+- **`on`, not `in`.** `on` is zoompan's 0-based output frame counter, which with `d=1` is exactly
+  the timeline frame. `in` is 1-based and lands a frame off.
+- **Upscale before zoompan, not inside it.** `scale=2496:1404:flags=lanczos` first means every
+  zoom level is a *downscale* out of one good lanczos pass; letting zoompan do its own upscaling
+  is visibly softer.
+- **Composite the overlay after the move.** The whole reason for the picture-only render.
+
+Measured cost: ~98 fps for the drift alone, ~70 fps with the overlay composite — about three
+minutes for a seven-minute film, which is cheaper than the Resolve render it replaces.

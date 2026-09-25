@@ -94,6 +94,8 @@ Corrections the operator has given that apply to **every** video, every brand, f
 
 ## Graphics
 
+- 2026-09-23 - **A decision about timing or motion is presented as a short clip of the real footage, never as a rule name, a gate code or a table.** After a full QA sheet the operator said *"I have no clue what any of that means. Are you able to create a clip to show me what each of those would mean?"* Build the options as labelled clips first (`tools/preview_window.py`), verify each against the footage, then ask.
+
 - 2026-09-20 - A graphic must outlast its own build. Check that every element's reveal frame is earlier than the graphic's end - a bio card ended 95 frames before its last row was due to appear, so that row never existed.
 - 2026-09-20 - Measure how long a finished graphic is actually on screen before its exit begins, in frames. A payoff diagram that read as "held" was clean for 8 frames; the caption min-duration guard does not cover graphics.
 - 2026-09-20 - Every graphic exits at the next sentence boundary after its final element lands, not at a hand-guessed frame. Derive the exit from the same word timings the captions use, and only ever let it SHORTEN the hand-set end.

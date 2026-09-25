@@ -40,9 +40,9 @@ Update immediately when any of these happen:
 
 These are the corrections that produced the current versions. They show the shape of a real update.
 
-**Keyword-first returns garbage** → became the governing rule of `youtube-niche-research`, with the two verified failing queries named inline, because the abstract version of the advice was not convincing enough to follow.
+**Keyword-first returns garbage** → became the governing rule of `yt-niche-research`, with the two verified failing queries named inline, because the abstract version of the advice was not convincing enough to follow.
 
-**The payload trap** → a video idea was rejected because the format's credential served the author rather than the audience. Became Gate 2 in `youtube-video-greenlight`, with the diagnostic question "what does the viewer *get*?"
+**The payload trap** → a video idea was rejected because the format's credential served the author rather than the audience. Became Gate 2 in `yt-video-greenlight`, with the diagnostic question "what does the viewer *get*?"
 
 **Differentiation miss** → a planned video duplicated the niche's top performer, discovered only by pulling that video's transcript. Became Gate 4, marked hard fail, with a note that it is the gate most easily skipped.
 
@@ -53,7 +53,7 @@ These are the corrections that produced the current versions. They show the shap
 ## When a run breaks
 
 A failure mid-run is the highest-value input this repo gets: it is a real condition nobody
-predicted, observed under real use. `channel-next` holds the protocol — stop at the failure, name
+predicted, observed under real use. `yt-channel-next` holds the protocol — stop at the failure, name
 what broke, decide whether it is fatal to the step or the phase, offer an honest labelled
 fallback, keep what was produced, **then fix the skill in the same session.**
 
