@@ -233,6 +233,18 @@ word-level timecodes — the basis for both cut lists and caption cues.
 sentence, "decisions at the whiteboard level" came back as "decisions at the end of the day".
 Read transcripts before trusting them, especially across pauses.
 
+**For captions, transcribe the FINISHED clean audio, and stamp the result.** Import the
+Voice Isolation WAV of the final cut as its own media item, `TranscribeAudio()`, poll
+`GetTranscription()`, and save `[start_frame, end_frame, text, speaker]` per word together with
+the **md5 of that WAV**. Every later stage refuses words whose md5 does not match the audio it
+is cutting, which is what stops a stale transcription landing on a re-cut. On an 11-testimonial
+job this timed words closest to the audio of anything tried: it had a phrase right where whisper
+was 0.7s early. Segments carry a `speaker` label, which is what removes interviewer audio.
+Three limits, all seen on that job: **it drops the last word or two at the very end of a file**;
+**it can hear a word across a silence** ("right" inside −62 dB); and **its punctuation varies
+run to run** (the same cut came back once with "Um, uh" and once without). Check tails and
+anything surprising against a second transcription.
+
 **`Transcription` is a dict, not an object.** The stubs declare it as a `TypedDict`, so
 `tr.segments` raises and `tr["segments"]` works. Same for every `TranscriptionSegment` and
 `TranscriptionWord` inside it.

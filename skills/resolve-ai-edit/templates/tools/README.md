@@ -53,6 +53,22 @@ plan schema and the three-round procedure are in `../../MOTION.md`.
 `window_grab.sh` takes the real screen captures those graphics frame: a web page through
 headless Chrome at 2x, or one app window by id. Look at every capture for private data first.
 
+## Edges, reframes and derived clips: `level_trace.py`, `edge_check.sh`, `facetrack.py`
+
+Three small tools from the testimonial job (`../../TESTIMONIAL-PLAYBOOK.md`), copy them on any
+job that cuts interviews or reframes to 4:5:
+
+- **`level_trace.py <file> <start> <dur>`** prints dBFS per video frame. Use it wherever a
+  transcript cannot place an edge: a filler fused into the next word ("Yeah, I think",
+  "practice. So") has no silence for an edge-snap to find, but always a dip. Cut at the dip.
+- **`edge_check.sh clip.mp4 ...`** transcribes the first and last 2.5s of every clip. Run it on
+  every clip and bite before review. It is how a stray "Yeah,", a trailing "I" and a clipped
+  "the" were caught; the caption list showed none of them.
+- **`facetrack.py <src> <crop-w> <x-min> <x-max> --cmd FILE`** gives a smoothed horizontal face
+  path and an ffmpeg `sendcmd` file, so a 4:5 crop keeps a moving speaker centred:
+  `-vf "sendcmd=f=FILE,crop@tr=W:H:X0:0,..."`. Needs OpenCV 4.x. Use `x-min`/`x-max` to keep a
+  platform's name label out of the window.
+
 ## Timing rules that are not mechanical
 
 - **Pin every line to the frame its FIRST word is spoken**, from word-level

@@ -195,13 +195,17 @@ the source of every sound in the plan so licensing is traceable.
 
 - **Trim to where the music actually starts.** `silencedetect` on the track and cut the lead-in
   silence so the bed starts on sound, not on nothing.
-- **Level relative to the voice, measured.** Start the bed about **20 LU under** the dialogue's
-  integrated loudness (dialogue at −14 LUFS → bed near −34 LUFS), then set it by ear with the
-  operator. A flat clip gain of about −18 to −20 dB on a mastered track lands in that range;
-  measure rather than trust it.
+- **Level relative to the voice, measured, and quieter than feels right.** Start the bed about
+  **22 LU under** the dialogue's integrated loudness (dialogue at −14 LUFS → bed near −36 LUFS).
+  On a VSL, 19 LU under was called "a little too loud" and 22 LU is where it landed. Then set it
+  by ear with the operator. A flat clip gain of about −20 to −22 dB on a mastered track lands in
+  that range; measure rather than trust it.
+- **Build to the CTA.** On a sales video or ad the bed is upbeat and builds to a crescendo on the
+  call to action, with energy kept up through the body. Pick or cut the track so its lift lands
+  on the CTA's first word.
 - **Fade in over ~1 s, out over ~2 s**, and end on a musical phrase if one falls within a
   second of the programme end.
-- **Ducking is a separate opt-in.** A bed that is already 20 LU under rarely needs it.
+- **Ducking is a separate opt-in.** A bed that is already 22 LU under rarely needs it.
 - Own track: **A4 `MUSIC`**. Then run the loudness pass (§4–5) on the whole programme.
 - **Licensing.** The operator's own licensed track, or a library that clears YouTube Content ID
   for their channel. A HeyGen catalog track (`media-use --type bgm`) needs its licence checked

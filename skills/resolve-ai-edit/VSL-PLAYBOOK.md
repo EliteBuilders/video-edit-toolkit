@@ -75,6 +75,21 @@ Every cue anchored to the frame a word is spoken. **Every graphic exits at the n
 boundary** after its last element lands — derived, never guessed, and only ever shortening a
 hand-set end. Check each graphic outlasts its own build.
 
+### 4b. "Show" is variety, not coverage
+Sales-video clients ask for a share of the runtime to be SHOWN rather than told (35-45% here,
+measured by a script over the graphics plan). Hitting the number with full-screen cards is the
+wrong way, and it drew three notes:
+
+- **Vary the treatment.** Six near-identical from/to panels got *"we have to get creative with
+  how we're presenting the information, not just putting up a screen with information on it."*
+  Fail the plan above 4 uses of any one look.
+- **Keep the speaker visible** when a graphic only labels what they are saying. A band or a
+  gilded phrase over the footage beats a takeover. Sometimes the caption IS the graphic: gild the
+  phrase in place and delete the card.
+- **Short holds: 1.5-3s after the build finishes.** 82 seconds of one cut was finished cards
+  sitting still for 5-8s each. Make more cards, each shorter; trimming holds alone drops the show
+  share below the floor.
+
 ### 5. Audio, settled in the timeline before any render
 See `AUDIO-PLAYBOOK.md`. The three that cost rounds:
 
