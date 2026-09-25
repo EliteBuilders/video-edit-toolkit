@@ -69,14 +69,10 @@ job that cuts interviews or reframes to 4:5:
   `-vf "sendcmd=f=FILE,crop@tr=W:H:X0:0,..."`. Needs OpenCV 4.x. Use `x-min`/`x-max` to keep a
   platform's name label out of the window.
 
-## Reading a reference video: `motion_timing.py`
+## Reading a reference video
 
-The `claude-video-vision` MCP finds where the animations are in a reference video and shows
-them, but takes whole-second timestamps. `motion_timing.py <video> <start> <dur> [--region
-x,y,w,h] [--strip out.png]` measures the move itself: per-frame change, then each burst's first
-and last frame, duration and ease shape. `--region` keeps a talking head behind the graphic from
-counting. Verified on a known render: an end-card dissolve read as 9 frames (0.30s, ease-out) and
-a pull-quote reveal as 14 frames (0.47s).
+Moved to its own skill: `skills/reference-video/` (the scan, `motion_timing.py`,
+`scan_fallback.py`). The graphics library is `skills/graphics-library/`.
 
 ## Timing rules that are not mechanical
 

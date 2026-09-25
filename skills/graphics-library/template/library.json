@@ -1,0 +1,56 @@
+{
+ "about": "Graphics reference library: how other editors DISPLAY information on screen, filed by the job the graphic does. Stills are steals for their system (layout, hierarchy, palette logic, motion), never for their exact design. Motion on a still is INFERRED; a clip in the entry makes it measured.",
+ "jobs": [
+  {
+   "folder": "01-process-and-steps",
+   "title": "Process & steps",
+   "when": "The speaker names a sequence, a framework or an acronym and walks through it."
+  },
+  {
+   "folder": "02-comparison",
+   "title": "Comparison",
+   "when": "Old vs new, them vs us, before vs after, two paths."
+  },
+  {
+   "folder": "03-spectrum-and-position",
+   "title": "Spectrum & position",
+   "when": "Where something sits between two ends, or how far along a journey someone is."
+  },
+  {
+   "folder": "04-structure-and-breakdown",
+   "title": "Structure & breakdown",
+   "when": "What something is made of: streams, parts, layers, a stack."
+  },
+  {
+   "folder": "05-who-is-speaking",
+   "title": "Who is speaking",
+   "when": "Introducing a person: name, role, company."
+  },
+  {
+   "folder": "06-proof-photos",
+   "title": "Proof with photos",
+   "when": "Real events, real people, real results the speaker refers to."
+  },
+  {
+   "folder": "07-range-and-audience",
+   "title": "Range & audience",
+   "when": "\"Anyone can\" / \"all kinds of people\": breadth of who it's for."
+  },
+  {
+   "folder": "08-labels-over-speaker",
+   "title": "Labels over the speaker",
+   "when": "Short terms the speaker lists, shown without leaving the speaker's face."
+  },
+  {
+   "folder": "09-beats-and-kinetic-text",
+   "title": "Beats & kinetic text",
+   "when": "A pause, a question, a pivot line, a moment of anticipation."
+  },
+  {
+   "folder": "10-screen-and-document",
+   "title": "Screen & document",
+   "when": "Showing a real app, page or document the speaker is talking about."
+  }
+ ],
+ "entries": []
+}

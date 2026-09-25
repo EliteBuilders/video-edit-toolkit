@@ -174,16 +174,9 @@ tools/window_grab.sh window "Finder" graphics/cap/folder.png                    
 **4a. Plan.** Read the locked cut's transcript and write `graphics/graphics-plan.json`
 (schema below) before building anything.
 
-**Look it up in the operator's graphics library first.** If `.graphics-library-path` exists in
-this skill's folder, read `LIBRARY.md` in that folder. It is the operator's own swipe file of how
-other editors display information, filed by JOB (process and steps, comparison, spectrum and
-position, structure, who is speaking, proof, range, labels over the speaker, beats, screen and
-document), with the layout, the system worth taking, the motion and a build recipe for each. For
+**Look it up in the operator's graphics library first** (the `graphics-library` skill): for
 every graphic in the plan, name its job, pick the library entry it borrows from, and write that
-entry's id in the plan item's `ref`. The operator can then see where each treatment came from.
-Take the system, never the design; vary treatments across the video (no entry more than ~4
-times). If the file is missing, ask where the library lives; do not invent a location. The
-library is private and lives outside this repo on purpose: it holds other people's frames. Every cue anchored to a spoken word. Show the
+entry's id in the plan item's `ref`. System, never design; no entry more than ~4 times. Every cue anchored to a spoken word. Show the
 operator the plan as a list, `time — scene or overlay — job — the words it carries`, and get a
 yes. Plans are cheap to change; renders are not.
 

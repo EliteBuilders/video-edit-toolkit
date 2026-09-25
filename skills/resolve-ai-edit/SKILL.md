@@ -74,27 +74,10 @@ missing, ask for **two to four references** and be specific about what you need:
 **Ask for the design in mind, and say that a video is the best answer.** The checkpoint question,
 verbatim or close: *"How do you want this edited? Do you have a design in mind, or a video whose
 look, pacing or animations you want? A file or a YouTube link is best; screenshots work too."*
-A reference VIDEO is read, not guessed at (the reference-video scan below). A reference still is
-read for its system through `edit-style`. Either way, check the operator's **graphics library**
-(`.graphics-library-path`, MOTION.md 4a) for treatments they have already collected.
-
-**The reference-video scan** (needs the `claude-video-vision` MCP; `bin/setup.sh` registers it,
-pinned and local-only):
-
-1. `video_info`, then `video_analyze` with `scene_changes` (and `transcription` if the audio
-   matters). Graphics, cards and transitions show up as scene changes.
-2. `video_detail` on a short window around each change, `view_sample` 3, to see what each one is.
-3. Show the operator **a numbered list of the animations found**: timestamp, what it is, the job
-   it does (library jobs), with a small frame strip for each. Ask which ones they mean. Do not
-   decide for them what "I like the animations" referred to.
-4. For each one picked, **measure it**: `templates/tools/motion_timing.py <video> <start> <dur>
-   [--region x,y,w,h]` gives the first and last frame, the duration and the ease shape. The MCP
-   only takes whole-second timestamps, so it finds and shows, and this times.
-5. File it: this client's look goes to their `EDIT-STYLE.md` (via `edit-style`); a treatment worth
-   reusing on any client goes to the graphics library as a 5-10s clip with its measured timing.
-
-If the MCP is not connected, say so, and fall back to ffmpeg frame grabs plus `motion_timing.py`
-on a downloaded file. Never describe a video you have not extracted frames from.
+A reference VIDEO is read, not guessed at: run the **`reference-video`** skill (scan, a numbered
+list of the animations found, the operator picks, each pick measured to the frame). A reference
+still goes through **`edit-style`**. Either way, check the **`graphics-library`** skill for
+treatments the operator has already collected.
 
 "Make it look good" is not an answer and should not be treated as one. Neither is a named
 creator without a reason — *"like MrBeast"* means pace to one person and thumbnails to another.
@@ -129,7 +112,7 @@ Run this every session before touching anything. Report results as a short block
 
 - Read `LEARNINGS.md` from the skill folder (`~/.claude/skills/resolve-ai-edit/LEARNINGS.md`). It holds every correction the operator has given on past videos. Treat its contents as binding instructions, ranking below this file but above your own defaults.
 - Read `templates/tools/README.md` and copy `templates/tools/build_srt.py` into the project's `tools/` on any job with burned-in captions. **Resolve's subtitle track exposes no styling to the API**, so captions are generated from a cue table and burned in from a composition; the template carries the guards that stop bad captions shipping.
-- **Check the video-vision MCP** (`claude mcp list` shows `claude-video-vision@<pinned>` connected) whenever the operator supplies a reference video or link. If it is missing, run `bin/setup.sh` or fall back to ffmpeg frames; do not install it from its own plugin marketplace, which floats on `@latest`.
+- **When the operator supplies a reference video or link, use the `reference-video` skill.** It checks the pinned video-vision MCP and falls back to its own ffmpeg scan when the server is missing.
 - **Read `TESTIMONIAL-PLAYBOOK.md` before any testimonial, and before any clip, 4:5 ad or compilation cut from one.** The procedure and numbers from an 11-testimonial job: the four footage kinds and their framing and motion, cuts drawn by diarisation and snapped to silence, question cards and end cards, captions from the finished audio, and how an approved edit becomes every other format without re-litigating it. Its first rule: one video per review round, and the new version replaces the old.
 - **Read `VSL-PLAYBOOK.md` before any long-form sales video.** The ordered procedure and the review loop, written after one shipped in 12 renders and 18 rounds when it needed a fraction of that. Its whole thesis: settle everything that can be settled on a still, in a text file, or in the timeline, BEFORE rendering a frame.
 - **Read `AUDIO-PLAYBOOK.md` whenever audio is the note, and before placing sound effects or a music bed (§6–7).** Echo, level, balance between speakers, loudness. It is ordered as a procedure: fix the source with the right tool (Voice Isolation, not an expander), set level in the timeline where the operator can hear it, trim on the way out, never boost into a limiter.

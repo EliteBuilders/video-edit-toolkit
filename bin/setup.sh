@@ -148,6 +148,29 @@ else
     && say "ok" "registered claude-video-vision@${VV_VERSION} (user scope)" \
     || say "MISS" "could not register; run: claude mcp add -s user claude-video-vision -- npx -y claude-video-vision@${VV_VERSION}"
 fi
+if command -v codex >/dev/null 2>&1; then
+  if codex mcp get claude-video-vision 2>/dev/null | grep -q "claude-video-vision@${VV_VERSION}"; then
+    say "ok" "Codex: claude-video-vision@${VV_VERSION} already registered"
+  else
+    codex mcp remove claude-video-vision >/dev/null 2>&1 || true
+    codex mcp add claude-video-vision -- npx -y "claude-video-vision@${VV_VERSION}" >/dev/null \
+      && say "ok" "Codex: registered claude-video-vision@${VV_VERSION}" \
+      || say "MISS" "Codex: run  codex mcp add claude-video-vision -- npx -y claude-video-vision@${VV_VERSION}"
+    # a cold npx start fetches the package; Codex's default startup wait is shorter
+    python3 - "$HOME/.codex/config.toml" <<'PY' || true
+import sys
+p = sys.argv[1]; s = open(p).read()
+hdr = "[mcp_servers.claude-video-vision]"
+if hdr in s and "startup_timeout_sec" not in s.split(hdr, 1)[1].split("\n[", 1)[0]:
+    head, tail = s.split(hdr, 1)
+    body, rest = (tail.split("\n[", 1) + [""])[:2]
+    s = head + hdr + body.rstrip("\n") + "\nstartup_timeout_sec = 120\n" + ("\n[" + rest if rest else "")
+    open(p, "w").write(s)
+PY
+  fi
+else
+  say "-" "codex CLI not found; skipped Codex registration (optional)"
+fi
 VVCFG="$HOME/.claude-video-vision/config.json"
 if [ ! -f "$VVCFG" ]; then
   mkdir -p "$HOME/.claude-video-vision/models"

@@ -250,7 +250,7 @@ on the local whisper backend. Do not vendor it, and do not use its plugin instal
   audio to Google, and reference videos are often a client's or a competitor's.
 - **Why not vendored:** a copy goes stale and makes this repo maintain someone else's project.
 - **Its limit:** its drill-in takes whole-second timestamps, so it cannot time an animation to
-  the frame. `templates/tools/motion_timing.py` does that on the window it finds.
+  the frame. `skills/reference-video/scripts/motion_timing.py` does that on the window it finds.
 - **Considered and not chosen: `bradautomates/claude-video` ("watch").** Far more stars, and good
   at general video Q&A, but its local engine caps frames at 2 fps, which misses a 10-frame pop or
   a 0.3s dissolve entirely. It also adds a SessionStart hook and a 1.5 GB WhisperX install, and

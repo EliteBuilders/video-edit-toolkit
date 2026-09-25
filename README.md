@@ -10,6 +10,8 @@ no scripting. It cuts what is in front of it, whatever that is and wherever it r
 |---|---|---|
 | `video-creative-brief` | Ten-question interview producing `BRAND.md` and `CREATIVE-BRIEF.md` | Once per brand, before any footage |
 | `edit-style` | Turns a dropped screenshot or reference into a dated, extracted decision in `EDIT-STYLE.md` | Every time an example is handed over |
+| `reference-video` | Reads a reference video or YouTube link: finds every animation, the operator picks, each pick measured to the frame | "I like the animations in this video" |
+| `graphics-library` | Keeps the operator's private swipe file of on-screen graphics, filed by the job each does, and uses it when planning | "Add the new references"; every graphics plan |
 | `resolve-ai-edit` | Six gated stages: ingest, rough cut, polish, QA, review-then-render, debrief | Every video |
 
 ## Start here
@@ -120,14 +122,16 @@ To resume: *"pick up at polish"*. To run one piece: *"just build the cut list"*.
 
 ```
 ./install.sh        # symlink the skills
-./bin/setup.sh      # once per machine: Resolve MCP + HyperFrames + ffmpeg check + video vision
+./bin/setup.sh      # once per machine: Resolve MCP + HyperFrames + ffmpeg check + video vision (Claude + Codex)
+bash skills/graphics-library/scripts/init_library.sh <folder>   # once: create or adopt your graphics library
 ```
 
 `setup.sh` clones HyperFrames from `github.com/heygen-com/hyperframes` to `~/Tools/hyperframes`,
 installs its dependencies, records the path, and runs `npx davinci-resolve-mcp setup`. Idempotent;
 it never touches an existing clone.
 
-Symlinks the skills into `~/.claude/skills`, so editing a skill here is live in the next session
+Symlinks the skills into `~/.claude/skills` (Claude Code) and `~/.codex/skills` plus
+`~/.agents/skills` (Codex), so every skill works in both, and editing one here is live in the next session
 with no re-install. Installs post-merge and post-checkout hooks so a pull that adds a skill makes
 it invocable.
 
