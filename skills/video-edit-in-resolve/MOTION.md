@@ -174,7 +174,7 @@ tools/window_grab.sh window "Finder" graphics/cap/folder.png                    
 **4a. Plan.** Read the locked cut's transcript and write `graphics/graphics-plan.json`
 (schema below) before building anything.
 
-**Look it up in the operator's graphics library first** (the `graphics-library` skill): for
+**Look it up in the operator's graphics library first** (the `video-edit-graphics-library` skill): for
 every graphic in the plan, name its job, pick the library entry it borrows from, and write that
 entry's id in the plan item's `ref`. System, never design; no entry more than ~4 times. Every cue anchored to a spoken word. Show the
 operator the plan as a list, `time — scene or overlay — job — the words it carries`, and get a
@@ -248,7 +248,7 @@ timeline's frame rate. The gate reads it; the SFX step writes into it.
 |---|---|
 | `kind` | `overlay`, `fullscreen` or `caption`. Full screens skip the face and zone checks |
 | `zone` | Named screen area for overlays. Two overlays may not share one at the same time |
-| `ref` | The graphics-library entry id this treatment borrows from (4a), or `none` when it is original |
+| `ref` | The video-edit-graphics-library entry id this treatment borrows from (4a), or `none` when it is original |
 | `zones.face` | x, y, w, h of the speaker's head **with hair and hands at rest**, measured from a still of each camera setup. Look at the still; do not guess. A cue can override with its own `face` |
 | `zones.captions` | Where captions live. Nothing but captions may enter it |
 | `words` | Words a viewer must read on this graphic. Sets the minimum clean hold (3 words/s, 1 s floor) unless `min_hold` is given |

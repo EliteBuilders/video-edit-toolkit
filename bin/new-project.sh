@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # new-project.sh <path>
 #
-# Scaffolds a video project that resolve-ai-edit and video-creative-brief can work in.
+# Scaffolds a video project that video-edit-in-resolve and video-edit-creative-brief can work in.
 #
 #   ./bin/new-project.sh ~/Video/resolve-agent
 #   ./bin/new-project.sh ~/Video/clients/acme
@@ -9,12 +9,12 @@
 # Idempotent. Files you have already edited are never overwritten — BRAND.md and
 # BROLL.md are kept as-is if present, because they hold real brand decisions.
 #
-# Templates are read from skills/resolve-ai-edit/templates/, which is the versioned
+# Templates are read from skills/video-edit-in-resolve/templates/, which is the versioned
 # source. Ported from the original tool drop, which shipped its own stale copies.
 set -euo pipefail
 
 TOOLKIT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-TPL="$TOOLKIT/skills/resolve-ai-edit/templates"
+TPL="$TOOLKIT/skills/video-edit-in-resolve/templates"
 PROJ="${1:-}"
 
 if [ -z "$PROJ" ]; then
@@ -67,7 +67,7 @@ cat <<MSG
   Next:
     1. Resolve:  File > Setup AI Assistants  (connect Claude Code, then restart it)
     2. cd "$PROJ" && claude
-    3. Run the video-creative-brief skill to produce BRAND.md and CREATIVE-BRIEF.md
-    4. Read FIRST-RUN.md before pointing resolve-ai-edit at footage you care about —
+    3. Run the video-edit-creative-brief skill to produce BRAND.md and CREATIVE-BRIEF.md
+    4. Read FIRST-RUN.md before pointing video-edit-in-resolve at footage you care about —
        the first run is meant to be a text-only cut list on a throwaway project.
 MSG

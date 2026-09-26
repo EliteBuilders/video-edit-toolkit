@@ -71,8 +71,8 @@ job that cuts interviews or reframes to 4:5:
 
 ## Reading a reference video
 
-Moved to its own skill: `skills/reference-video/` (the scan, `motion_timing.py`,
-`scan_fallback.py`). The graphics library is `skills/graphics-library/`.
+Moved to its own skill: `skills/video-edit-reference-video/` (the scan, `motion_timing.py`,
+`scan_fallback.py`). The graphics library is `skills/video-edit-graphics-library/`.
 
 ## Timing rules that are not mechanical
 

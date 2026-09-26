@@ -4,7 +4,7 @@ For an **ad, testimonial or case study** — anything that sells one thing to on
 than carrying a channel's identity. A channel `CREATIVE-BRIEF.md` is not a substitute and does
 not answer these questions.
 
-Fill this before the edit starts. `resolve-ai-edit` reads it at preflight and will offer to
+Fill this before the edit starts. `video-edit-in-resolve` reads it at preflight and will offer to
 capture it in five questions if it is missing.
 
 ---

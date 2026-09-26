@@ -1,5 +1,5 @@
 ---
-name: graphics-library
+name: video-edit-graphics-library
 description: Keep and use the operator's private graphics reference library - a swipe file of how other editors display information on screen, filed by the JOB each graphic does (process, comparison, spectrum, structure, who is speaking, proof, range, labels over the speaker, beats, screen and document). Use when the operator says "add the new references to the graphics library", "add this to the library", "catalogue the inbox", "what do we have for showing a comparison", "find me a treatment for this", or when planning graphics for any video. Works in Claude Code and Codex. The library itself is private and never enters the public toolkit repo.
 triggers:
   - add the new references
@@ -44,10 +44,10 @@ which), `build` (our own version, in MOTION.md scene and catalog terms), `use`, 
 ## Adding references (intake)
 
 1. Read the library's `README.md` and `library.json`. New files are in `_inbox/`.
-2. A long video or a link: run the `reference-video` skill first and keep only the moments the
+2. A long video or a link: run the `video-edit-reference-video` skill first and keep only the moments the
    operator picks, cut to 5-10s clips.
 3. Look at every file. For a clip, measure the motion with
-   `reference-video/scripts/motion_timing.py` and write it as **measured** (frames, seconds, ease
+   `video-edit-reference-video/scripts/motion_timing.py` and write it as **measured** (frames, seconds, ease
    shape). For a still, the motion is **inferred** and must say so.
 4. File by **job**: move it into the matching folder, renamed
    `<what-it-shows>--<source-short>--<original-name>`. A reference that fits no job gets a new
@@ -59,7 +59,7 @@ which), `build` (our own version, in MOTION.md scene and catalog terms), `use`, 
 
 ## Using it when planning graphics
 
-(`resolve-ai-edit`, MOTION.md step 4a.) For every graphic in a plan: name its job, read that
+(`video-edit-in-resolve`, MOTION.md step 4a.) For every graphic in a plan: name its job, read that
 job's entries in `LIBRARY.md`, pick the one it borrows from, and write the entry id in the plan
 item's `ref` (or `none` when original). Then:
 

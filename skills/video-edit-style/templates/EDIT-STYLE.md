@@ -1,7 +1,7 @@
 # Edit style — <CLIENT / PROJECT>
 
 The visual evidence behind this project's edits. Append-only: supersede entries, never rewrite
-them. `resolve-ai-edit` reads this at preflight.
+them. `video-edit-in-resolve` reads this at preflight.
 
 - `BRAND.md` — the mechanical spec: colours, type, zones
 - `CREATIVE-BRIEF.md` — the stable intent: viewer, promise, feel, prohibitions

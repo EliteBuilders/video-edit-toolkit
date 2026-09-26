@@ -96,7 +96,7 @@ if [ -f "${HF_CLI:-}" ]; then
   if [ -d "$HOME/.claude/skills/hyperframes-registry" ]; then
     say "ok" "HyperFrames skills installed (catalog, animation rules, media-use)"
   else
-    # Installs for Claude Code and Codex. resolve-ai-edit stays the entry point; see MOTION.md §0.
+    # Installs for Claude Code and Codex. video-edit-in-resolve stays the entry point; see MOTION.md §0.
     node "$HF_CLI" skills </dev/null >/dev/null 2>&1 \
       && say "ok" "HyperFrames skills installed for Claude Code and Codex" \
       || say "WARN" "skills install failed. Run by hand:  node $HF_CLI skills"

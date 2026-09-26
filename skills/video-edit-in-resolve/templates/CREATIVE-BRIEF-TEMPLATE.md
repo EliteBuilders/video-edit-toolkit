@@ -1,6 +1,6 @@
 # Creative Brief: [BRAND NAME]
 
-Built [DATE] with the `video-creative-brief` skill. `resolve-ai-edit` reads this on every run.
+Built [DATE] with the `video-edit-creative-brief` skill. `video-edit-in-resolve` reads this on every run.
 
 ## The viewer
 

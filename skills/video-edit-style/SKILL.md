@@ -1,6 +1,6 @@
 ---
-name: edit-style
-description: Capture an editing-style reference — a screenshot, a frame, a link, a clip someone liked or hated — read it for its system rather than its content, and write what was extracted into that client's EDIT-STYLE.md so the next edit starts closer. Use when the operator drops in an example and says "make it look like this", "I like how they do captions", "this is the vibe", "don't do what they did here", "here's a reference", "use this style", or hands over a screenshot mid-edit. Also use to review what a client's accumulated style record now says before starting an edit. A reference video goes to the reference-video skill; a general treatment for any client goes to the graphics-library skill.
+name: video-edit-style
+description: Capture an editing-style reference — a screenshot, a frame, a link, a clip someone liked or hated — read it for its system rather than its content, and write what was extracted into that client's EDIT-STYLE.md so the next edit starts closer. Use when the operator drops in an example and says "make it look like this", "I like how they do captions", "this is the vibe", "don't do what they did here", "here's a reference", "use this style", or hands over a screenshot mid-edit. Also use to review what a client's accumulated style record now says before starting an edit. A reference video goes to the video-edit-reference-video skill; a general treatment for any client goes to the video-edit-graphics-library skill.
 triggers:
   - here's a reference
   - make it look like this
@@ -17,7 +17,7 @@ triggers:
 **The mechanism that makes the next edit better than this one.** An edit gets closer to what
 someone wanted when the system has seen what they actually like — not described in words, but
 shown. This skill turns a dropped screenshot into a written, dated decision that
-`resolve-ai-edit` reads at preflight.
+`video-edit-in-resolve` reads at preflight.
 
 One `EDIT-STYLE.md` per client project. It grows. It is the visual evidence; `CREATIVE-BRIEF.md`
 stays the stable statement of intent, and `BRAND.md` stays the mechanical spec.
@@ -37,7 +37,7 @@ rather than trace.
 1. **Take the file.** Save it into the project's `reference/` folder, named
    `<YYYY-MM-DD>-<what-it-shows>.png`. A link gets a screenshot saved the same way, plus the URL
    recorded — links rot, and a style decision that cannot be re-examined is a rule with no reason.
-   If it is a video or a YouTube link, hand it to the **`reference-video`** skill: it finds every
+   If it is a video or a YouTube link, hand it to the **`video-edit-reference-video`** skill: it finds every
    graphic moment, the operator picks, and each pick comes back as a clip, a frame, timecodes and
    measured timing.
 2. **Ask one question: what about this?** A reference handed over without a reason is ambiguous —
@@ -71,8 +71,8 @@ rather than trace.
   this"). That is this skill.
 - **The operator's graphics library**, when it is a general example of how to DISPLAY a kind of
   information, useful on any client ("add the new references to the graphics library"). That is
-  the **`graphics-library`** skill.
-- **A reference VIDEO or link** is read by the **`reference-video`** skill first; its picks then
+  the **`video-edit-graphics-library`** skill.
+- **A reference VIDEO or link** is read by the **`video-edit-reference-video`** skill first; its picks then
   come back here or go to the library.
 
 ## What a good entry looks like
@@ -94,7 +94,7 @@ rather than trace.
 
 ## Before an edit starts
 
-`resolve-ai-edit` reads `EDIT-STYLE.md` at preflight. When asked what a client's style is, read
+`video-edit-in-resolve` reads `EDIT-STYLE.md` at preflight. When asked what a client's style is, read
 the file and answer from it — adopted entries first, then anything still marked `TRY`, then the
 rejected list, because knowing what was ruled out and why prevents proposing it again.
 
@@ -104,7 +104,7 @@ intent. Propose. The operator approves.
 
 ## What this skill does not do
 
-- **It does not edit.** That is `resolve-ai-edit`.
+- **It does not edit.** That is `video-edit-in-resolve`.
 - **It does not invent a style.** No reference, no entry. An extraction from nothing is a guess
   wearing a date.
 - **It does not carry one client's style to another.** Every client's record is theirs. A treatment

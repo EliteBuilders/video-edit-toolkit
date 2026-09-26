@@ -4,7 +4,7 @@ Open Claude Code in the project folder, then paste the block below. It stops bef
 
 ---
 
-Use the resolve-ai-edit skill.
+Use the video-edit-in-resolve skill.
 
 Run preflight first and report the results before doing anything else. Confirm Resolve is reachable over MCP, confirm it is Studio 21.1 or later, read BRAND.md, CREATIVE-BRIEF.md and BROLL.md, and tell me what you found.
 

@@ -1,5 +1,5 @@
 ---
-name: resolve-ai-edit
+name: video-edit-in-resolve
 description: Edit any video in DaVinci Resolve Studio 21.1+ through its native MCP server, build motion graphics as code, and learn from every correction. Handles YouTube long-form, Shorts and Reels, paid ads, testimonials, case studies and screen recordings, with the structure, aspect ratio, caption and loudness spec for each platform it runs on. Use when the operator says "edit this video", "rough cut this", "cut the silences", "make shorts from this", "cut this ad", "edit this testimonial", "make a reel", "sync and assemble", "add b-roll", "make me a graphic", "grade and render", or points at raw footage and asks for a cut. Asks what type of video it is and where it runs before touching media. Enforces transcript-first cutting, stage gates, a reference loop before any graphic is built, a cost check before spending credits, a mandatory human review pass before any render, and a debrief that files every correction so the next video is better.
 ---
 
@@ -22,7 +22,7 @@ this map is detail for a phase; this is the shape of a run.
 
 **The full run, in one command.** Paste this to start:
 
-> Use the resolve-ai-edit skill. Run the full process from intake. Start with preflight and
+> Use the video-edit-in-resolve skill. Run the full process from intake. Start with preflight and
 > report it before touching anything.
 
 That runs phases 1-5 with a stop at every gate. To resume mid-way, name the phase: *"pick up at
@@ -74,15 +74,15 @@ missing, ask for **two to four references** and be specific about what you need:
 **Ask for the design in mind, and say that a video is the best answer.** The checkpoint question,
 verbatim or close: *"How do you want this edited? Do you have a design in mind, or a video whose
 look, pacing or animations you want? A file or a YouTube link is best; screenshots work too."*
-A reference VIDEO is read, not guessed at: run the **`reference-video`** skill (scan, a numbered
+A reference VIDEO is read, not guessed at: run the **`video-edit-reference-video`** skill (scan, a numbered
 list of the animations found, the operator picks, each pick measured to the frame). A reference
-still goes through **`edit-style`**. Either way, check the **`graphics-library`** skill for
+still goes through **`video-edit-style`**. Either way, check the **`video-edit-graphics-library`** skill for
 treatments the operator has already collected.
 
 "Make it look good" is not an answer and should not be treated as one. Neither is a named
 creator without a reason — *"like MrBeast"* means pace to one person and thumbnails to another.
 
-Every reference that arrives goes through the `edit-style` skill before the cut starts: saved to
+Every reference that arrives goes through the `video-edit-style` skill before the cut starts: saved to
 `reference/`, extracted for its *system* rather than its composition, and filed as a dated
 decision. **Never copy a reference's actual design.** Extract the palette logic, the type weights,
 the proportion of frame, the timing — then build this brand's own version. Copying ships under
@@ -105,14 +105,14 @@ Run this every session before touching anything. Report results as a short block
 
   | Type | Also required | If missing |
   |---|---|---|
-  | Channel video — long-form, Short, tutorial | `CREATIVE-BRIEF.md` | **Stop.** Run `video-creative-brief`. Editing a channel video without one produces a generic default, which is the whole problem this system exists to solve |
+  | Channel video — long-form, Short, tutorial | `CREATIVE-BRIEF.md` | **Stop.** Run `video-edit-creative-brief`. Editing a channel video without one produces a generic default, which is the whole problem this system exists to solve |
   | VSL / long-form sales video | A **spot brief**, plus a runtime target agreed before cutting | Read `VSL-PLAYBOOK.md` first. This type costs a render per correction; the order of operations is the whole game |
 | Ad, testimonial, case study | A **spot brief** — the offer, the audience, the one claim, the CTA, where it runs, and any claim that needs legal sign-off | Capture it inline in five questions and write it to `SPOT-BRIEF.md` beside `BRAND.md`. A channel creative brief is not a substitute: a spot sells one thing to one audience, it does not carry a channel's identity |
   | Client work of any type | The **client's** `BRAND.md`, and their `compliance.md` if one exists | **Stop.** Never dress a client's video in the operator's brand or another client's |
 
-- Read `LEARNINGS.md` from the skill folder (`~/.claude/skills/resolve-ai-edit/LEARNINGS.md`). It holds every correction the operator has given on past videos. Treat its contents as binding instructions, ranking below this file but above your own defaults.
+- Read `LEARNINGS.md` from the skill folder (`~/.claude/skills/video-edit-in-resolve/LEARNINGS.md`). It holds every correction the operator has given on past videos. Treat its contents as binding instructions, ranking below this file but above your own defaults.
 - Read `templates/tools/README.md` and copy `templates/tools/build_srt.py` into the project's `tools/` on any job with burned-in captions. **Resolve's subtitle track exposes no styling to the API**, so captions are generated from a cue table and burned in from a composition; the template carries the guards that stop bad captions shipping.
-- **When the operator supplies a reference video or link, use the `reference-video` skill.** It checks the pinned video-vision MCP and falls back to its own ffmpeg scan when the server is missing.
+- **When the operator supplies a reference video or link, use the `video-edit-reference-video` skill.** It checks the pinned video-vision MCP and falls back to its own ffmpeg scan when the server is missing.
 - **Read `TESTIMONIAL-PLAYBOOK.md` before any testimonial, and before any clip, 4:5 ad or compilation cut from one.** The procedure and numbers from an 11-testimonial job: the four footage kinds and their framing and motion, cuts drawn by diarisation and snapped to silence, question cards and end cards, captions from the finished audio, and how an approved edit becomes every other format without re-litigating it. Its first rule: one video per review round, and the new version replaces the old.
 - **Read `VSL-PLAYBOOK.md` before any long-form sales video.** The ordered procedure and the review loop, written after one shipped in 12 renders and 18 rounds when it needed a fraction of that. Its whole thesis: settle everything that can be settled on a still, in a text file, or in the timeline, BEFORE rendering a frame.
 - **Read `AUDIO-PLAYBOOK.md` whenever audio is the note, and before placing sound effects or a music bed (§6–7).** Echo, level, balance between speakers, loudness. It is ordered as a procedure: fix the source with the right tool (Voice Isolation, not an expander), set level in the timeline where the operator can hear it, trim on the way out, never boost into a limiter.
@@ -233,14 +233,14 @@ Then take every correction they gave during this video, including offhand ones, 
 |---|---|---|
 | **Global** | True for every video, every brand, forever. A craft rule. | `LEARNINGS.md` in the skill folder |
 | **Brand** | True for this brand only. Taste, pacing, a prohibition. | `CREATIVE-BRIEF.md`, or `BRAND.md` if it is a color, font or zone |
-| **Visual style** | A look the operator showed you, or corrected you toward, for this client. | `EDIT-STYLE.md`, via the `edit-style` skill — with the reference file saved beside it |
+| **Visual style** | A look the operator showed you, or corrected you toward, for this client. | `EDIT-STYLE.md`, via the `video-edit-style` skill — with the reference file saved beside it |
 | **One-off** | True for this video only. | Nowhere. Do not file it. |
 
 Examples of the distinction, because getting this wrong is how a system rots:
 
 - "You cut too close to the word again" is **global**. Tighten the air rule.
 - "Don't use zoom punches on this channel, it feels cheap for them" is **brand**. Into that client's brief.
-- "Captions should look like this one" with a screenshot attached is **visual style**. Run `edit-style`: save the reference, extract its system, write the dated decision. A style correction with no reference file saved cannot be checked later and will be re-argued.
+- "Captions should look like this one" with a screenshot attached is **visual style**. Run `video-edit-style`: save the reference, extract its system, write the dated decision. A style correction with no reference file saved cannot be checked later and will be re-argued.
 - "Cut the bit about the truck, it didn't land" is **one-off**. File nothing.
 
 Rules for writing a learning:

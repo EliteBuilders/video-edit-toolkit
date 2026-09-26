@@ -32,9 +32,9 @@ cat <<'MSG'
 
 Done. Three skills:
 
-    /video-creative-brief   what should this brand look and feel like?   (once per brand)
-    /edit-style             here is a reference — extract it and file it (whenever one arrives)
-    /resolve-ai-edit        cut it, grade it, graphic it                 (every video)
+    /video-edit-creative-brief   what should this brand look and feel like?   (once per brand)
+    /video-edit-style             here is a reference — extract it and file it (whenever one arrives)
+    /video-edit-in-resolve        cut it, grade it, graphic it                 (every video)
 
 Start a project with:
 

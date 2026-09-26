@@ -1,6 +1,6 @@
 ---
-name: video-creative-brief
-description: Build or update the creative brief and brand guidelines for a video channel, before any editing or graphics happen. Use when starting a new video project or client channel, onboarding a client's brand, or when the operator says "set up the brief", "update the brand guidelines", "new client channel", "what's our creative direction for X", or asks why videos for a brand do not feel consistent. Interviews rather than guesses, and writes BRAND.md and CREATIVE-BRIEF.md that resolve-ai-edit reads on every run.
+name: video-edit-creative-brief
+description: Build or update the creative brief and brand guidelines for a video channel, before any editing or graphics happen. Use when starting a new video project or client channel, onboarding a client's brand, or when the operator says "set up the brief", "update the brand guidelines", "new client channel", "what's our creative direction for X", or asks why videos for a brand do not feel consistent. Interviews rather than guesses, and writes BRAND.md and CREATIVE-BRIEF.md that video-edit-in-resolve reads on every run.
 ---
 
 # Video Creative Brief
@@ -94,7 +94,7 @@ Then read it back and ask whether it sounds like the brand. If they hesitate, it
 Once both files exist, say plainly:
 
 - Which questions are still `TODO` and what is blocked by each
-- That `resolve-ai-edit` will read both files on preflight
+- That `video-edit-in-resolve` will read both files on preflight
 - That the first graphic built for this brand should be previewed as a live HTML page before anything renders, so the brief gets tested against something visible rather than staying theoretical
 
 ## Client work

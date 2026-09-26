@@ -1,6 +1,6 @@
 ---
-name: reference-video
-description: Read a reference VIDEO (a file or a YouTube link) for its graphics, animations, transitions and pacing - find every moment, let the operator pick the ones they meant, then measure each pick to the frame and file it. Use when the operator hands over a video and says "I like the animations in this", "make it look like this video", "what animations are in this", "how did they do this transition", "steal this style", "here's a reference video", or pastes a YouTube link as a style reference. Works in Claude Code and Codex. Reading a still screenshot is the edit-style skill; filing a reusable treatment is the graphics-library skill.
+name: video-edit-reference-video
+description: Read a reference VIDEO (a file or a YouTube link) for its graphics, animations, transitions and pacing - find every moment, let the operator pick the ones they meant, then measure each pick to the frame and file it. Use when the operator hands over a video and says "I like the animations in this", "make it look like this video", "what animations are in this", "how did they do this transition", "steal this style", "here's a reference video", or pastes a YouTube link as a style reference. Works in Claude Code and Codex. Reading a still screenshot is the video-edit-style skill; filing a reusable treatment is the video-edit-graphics-library skill.
 triggers:
   - i like the animations in this video
   - reference video
@@ -80,9 +80,9 @@ pull-quote reveal 14 frames (0.47s). Both matched what had been built.
 
 ### 5. File
 
-- **This client's look** -> the `edit-style` skill, into their `EDIT-STYLE.md` (adopt / try /
+- **This client's look** -> the `video-edit-style` skill, into their `EDIT-STYLE.md` (adopt / try /
   reject, dated).
-- **A treatment worth reusing on any client** -> the `graphics-library` skill: cut the moment to a
+- **A treatment worth reusing on any client** -> the `video-edit-graphics-library` skill: cut the moment to a
   5-10s clip (`ffmpeg -ss S -t D -i video -c copy clip.mp4`, re-encode if the cut is not on a
   keyframe), drop it in the library's `_inbox/`, and catalogue it with the measured timing.
 - **A one-off** -> nowhere.

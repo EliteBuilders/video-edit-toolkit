@@ -8,32 +8,32 @@ no scripting. It cuts what is in front of it, whatever that is and wherever it r
 
 | Skill | What it does | When |
 |---|---|---|
-| `video-creative-brief` | Ten-question interview producing `BRAND.md` and `CREATIVE-BRIEF.md` | Once per brand, before any footage |
-| `edit-style` | Turns a dropped screenshot or reference into a dated, extracted decision in `EDIT-STYLE.md` | Every time an example is handed over |
-| `reference-video` | Reads a reference video or YouTube link: finds every animation, the operator picks, each pick measured to the frame | "I like the animations in this video" |
-| `graphics-library` | Keeps the operator's private swipe file of on-screen graphics, filed by the job each does, and uses it when planning | "Add the new references"; every graphics plan |
-| `resolve-ai-edit` | Six gated stages: ingest, rough cut, polish, QA, review-then-render, debrief | Every video |
+| `video-edit-creative-brief` | Ten-question interview producing `BRAND.md` and `CREATIVE-BRIEF.md` | Once per brand, before any footage |
+| `video-edit-style` | Turns a dropped screenshot or reference into a dated, extracted decision in `EDIT-STYLE.md` | Every time an example is handed over |
+| `video-edit-reference-video` | Reads a reference video or YouTube link: finds every animation, the operator picks, each pick measured to the frame | "I like the animations in this video" |
+| `video-edit-graphics-library` | Keeps the operator's private swipe file of on-screen graphics, filed by the job each does, and uses it when planning | "Add the new references"; every graphics plan |
+| `video-edit-in-resolve` | Six gated stages: ingest, rough cut, polish, QA, review-then-render, debrief | Every video |
 
 ## Start here
 
 New to this repo? Read in this order:
 
-1. **`skills/resolve-ai-edit/PIPELINE.md`** — how the machine is wired. Three programs, not one:
+1. **`skills/video-edit-in-resolve/PIPELINE.md`** — how the machine is wired. Three programs, not one:
    HyperFrames renders the graphics, Resolve renders an *intermediate*, ffmpeg makes the file a
    human watches. **Resolve's render queue never shows you a finished video** — that one fact
    confuses everybody once.
-2. **`skills/resolve-ai-edit/SKILL.md`** — the six gated stages and the QA checklist per video type.
-3. **`skills/resolve-ai-edit/VSL-PLAYBOOK.md`** — the ordered procedure for long-form sales
+2. **`skills/video-edit-in-resolve/SKILL.md`** — the six gated stages and the QA checklist per video type.
+3. **`skills/video-edit-in-resolve/VSL-PLAYBOOK.md`** — the ordered procedure for long-form sales
    video, the most expensive type to get wrong. Settle it on a still, in a text file, or in the
    timeline — before rendering a frame.
-4. **`skills/resolve-ai-edit/AUDIO-PLAYBOOK.md`** — what to do when audio is the note, in order.
+4. **`skills/video-edit-in-resolve/AUDIO-PLAYBOOK.md`** — what to do when audio is the note, in order.
    Echo, level, speaker balance, loudness. Every number in it was measured and every mistake in
    it was actually made.
-5. **`skills/resolve-ai-edit/LEARNINGS.md`** — craft rules earned from real corrections, grouped
+5. **`skills/video-edit-in-resolve/LEARNINGS.md`** — craft rules earned from real corrections, grouped
    by theme. Binding.
-6. **`skills/resolve-ai-edit/RESOLVE-API-TRAPS.md`** — verified Resolve 21.1 behaviour that
+6. **`skills/video-edit-in-resolve/RESOLVE-API-TRAPS.md`** — verified Resolve 21.1 behaviour that
    contradicts the documented stubs. Silent write failures, mostly.
-7. **`skills/resolve-ai-edit/templates/tools/`** — a caption generator and a delivery script with
+7. **`skills/video-edit-in-resolve/templates/tools/`** — a caption generator and a delivery script with
    the traps already fixed. Copy them into a project rather than writing your own.
 
 ## It carries no client
@@ -113,7 +113,7 @@ Five phases, gated. Nothing starts before the previous one is approved.
 
 **To run the whole thing:**
 
-> Use the resolve-ai-edit skill. Run the full process from intake. Start with preflight and
+> Use the video-edit-in-resolve skill. Run the full process from intake. Start with preflight and
 > report it before touching anything.
 
 To resume: *"pick up at polish"*. To run one piece: *"just build the cut list"*.
@@ -123,7 +123,7 @@ To resume: *"pick up at polish"*. To run one piece: *"just build the cut list"*.
 ```
 ./install.sh        # symlink the skills
 ./bin/setup.sh      # once per machine: Resolve MCP + HyperFrames + ffmpeg check + video vision (Claude + Codex)
-bash skills/graphics-library/scripts/init_library.sh <folder>   # once: create or adopt your graphics library
+bash skills/video-edit-graphics-library/scripts/init_library.sh <folder>   # once: create or adopt your graphics library
 ```
 
 `setup.sh` clones HyperFrames from `github.com/heygen-com/hyperframes` to `~/Tools/hyperframes`,

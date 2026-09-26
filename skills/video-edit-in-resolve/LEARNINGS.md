@@ -1,7 +1,7 @@
 # Learnings
 
 Corrections the operator has given that apply to **every** video, every brand, forever.
-`resolve-ai-edit` reads this on preflight and treats it as binding, ranking below SKILL.md but above its own defaults.
+`video-edit-in-resolve` reads this on preflight and treats it as binding, ranking below SKILL.md but above its own defaults.
 
 ## Rules
 
